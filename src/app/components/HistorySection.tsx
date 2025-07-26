@@ -13,7 +13,6 @@ interface HistoryItem {
   classification: string;
   accuracy: number;
   drynessLevel: number;
-  is_banana: boolean;
   created_at: string;
 }
 
@@ -42,7 +41,6 @@ function formatTanggalIndo(dateString: string) {
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit',
   });
 }
 
@@ -50,8 +48,11 @@ export default function HistorySection() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [showAll, setShowAll] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
+  // Dapatkan base URL dari environment variable. Hilangkan '/api' untuk path gambar.
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+  const baseUrl = apiUrl.replace('/api', '');
 
   const displayedHistory = history.slice(0, 5);
 
@@ -59,7 +60,8 @@ export default function HistorySection() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('http://localhost:5000/history');
+      // <-- DIUBAH: Menggunakan environment variable untuk mengambil history
+      const res = await fetch(`${apiUrl}/history`);
       if (!res.ok) throw new Error('Gagal mengambil data history');
       const data = await res.json();
       setHistory(data);
@@ -158,7 +160,8 @@ export default function HistorySection() {
                 {/* Thumbnail Gambar */}
                 <div style={{ flexShrink: 0 }}>
                   <Image
-                    src={`http://localhost:5000/uploads/${item.filename}`}
+                    // <-- DIUBAH: Menggunakan base URL untuk menampilkan gambar dari server
+                    src={`${baseUrl}/uploads/${item.filename}`}
                     alt={`Gambar ${item.filename}`}
                     width={80}
                     height={80}
@@ -184,7 +187,8 @@ export default function HistorySection() {
                     </span>
                   </div>
                   <div style={{ fontSize: "0.9rem", color: "#64748b", display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <FiClock size={14} /> {item.created_at}
+                     {/* <-- DIUBAH: Menggunakan fungsi format tanggal */}
+                    <FiClock size={14} /> {formatTanggalIndo(item.created_at)}
                   </div>
                   <div style={{ fontSize: "0.9rem", color: "#64748b", marginTop: 8 }}>
                     <b>Nama File:</b> {item.filename} <br/>
@@ -196,8 +200,7 @@ export default function HistorySection() {
                           : item.classification === 'Kering'
                             ? '0–30%'
                             : '-'
-                    } <br/>
-                    <b>Pisang?</b> <span style={{ color: item.is_banana ? '#15803d' : '#b91c1c', fontWeight: 600 }}>{item.is_banana ? 'Ya' : 'Bukan'}</span>
+                    }
                   </div>
                 </div>
               </div>
@@ -288,23 +291,12 @@ export default function HistorySection() {
                       gap: "1.5rem",
                       flexWrap: "wrap",
                       textAlign: "left",
-                      transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                      animation: `fadeInUp 0.5s ease-out ${index * 0.1}s forwards`,
-                      opacity: 0,
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.transform = "translateY(-5px)";
-                      e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.08)";
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.transform = "translateY(0)";
-                      e.currentTarget.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.05)";
                     }}
                   >
-                    {/* Thumbnail Gambar */}
                     <div style={{ flexShrink: 0 }}>
                       <Image
-                        src={`http://localhost:5000/uploads/${item.filename}`}
+                        // <-- DIUBAH: Menggunakan base URL untuk menampilkan gambar dari server
+                        src={`${baseUrl}/uploads/${item.filename}`}
                         alt={`Gambar ${item.filename}`}
                         width={80}
                         height={80}
@@ -312,9 +304,8 @@ export default function HistorySection() {
                         unoptimized
                       />
                     </div>
-                    {/* Info Utama */}
                     <div style={{ flex: "1 1 300px" }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
                         <span style={{
                             ...getBadgeColor(item.classification),
                             padding: '0.25rem 0.75rem',
@@ -330,7 +321,8 @@ export default function HistorySection() {
                         </span>
                       </div>
                       <div style={{ fontSize: "0.9rem", color: "#64748b", display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <FiClock size={14} /> {item.created_at}
+                        {/* <-- DIUBAH: Menggunakan fungsi format tanggal */}
+                        <FiClock size={14} /> {formatTanggalIndo(item.created_at)}
                       </div>
                       <div style={{ fontSize: "0.9rem", color: "#64748b", marginTop: 8 }}>
                         <b>Nama File:</b> {item.filename} <br/>
@@ -342,8 +334,7 @@ export default function HistorySection() {
                               : item.classification === 'Kering'
                                 ? '0–30%'
                                 : '-'
-                        } <br/>
-                        <b>Pisang?</b> <span style={{ color: item.is_banana ? '#15803d' : '#b91c1c', fontWeight: 600 }}>{item.is_banana ? 'Ya' : 'Bukan'}</span>
+                        }
                       </div>
                     </div>
                   </div>
