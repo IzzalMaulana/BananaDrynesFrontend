@@ -65,7 +65,8 @@ export default function HomeSection() {
       setHistoryLoading(true);
       setHistoryError(null);
       try {
-        const res = await fetch('http://localhost:5000/history');
+        const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/history`;
+        const res = await fetch(apiUrl);
         if (!res.ok) throw new Error('Gagal mengambil data history');
         const data = await res.json();
         setHistory(data);
@@ -140,10 +141,12 @@ export default function HomeSection() {
     const formData = new FormData();
     formData.append('image', imageFile);
     try {
-      const response = await fetch('http://localhost:5000/predict', {
-        method: 'POST',
-        body: formData,
-      });
+      const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/predict`;
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    body: formData,
+  });
       if (!response.ok) {
         throw new Error(`Server error: ${response.status}`);
       }
