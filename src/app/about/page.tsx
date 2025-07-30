@@ -1,12 +1,12 @@
 import Navbar from "../components/Navbar";
-import BananaFactsSection from "../components/BananaFactsSection";
+import AboutSection from "../components/AboutSection";
 import Footer from "../components/Footer";
 
-export default function BananaFactsPage() {
+export default function AboutPage() {
   return (
     <main style={{ background: "#fafafa", minHeight: "100vh" }}>
       <Navbar />
-      <BananaFactsSection />
+      <AboutSection />
       <Footer />
     </main>
   );

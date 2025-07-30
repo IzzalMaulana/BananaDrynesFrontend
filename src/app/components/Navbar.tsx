@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
+import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 // Objek style untuk kerapian kode
 const navbarStyle: React.CSSProperties = {
@@ -27,6 +28,7 @@ const brandStyle: React.CSSProperties = {
   fontSize: "1.5rem",
   color: "#111",
   letterSpacing: "-1px",
+  textDecoration: "none",
 };
 
 const navLinksStyle: React.CSSProperties = {
@@ -94,73 +96,48 @@ const underlineStyle = `
 `;
 
 export default function Navbar() {
-  const [activeSection, setActiveSection] = useState("home");
-
-  useEffect(() => {
-    const sections = ["home", "history", "about", "banana-facts"];
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        });
-      },
-      { rootMargin: "-50% 0px -50% 0px" }
-    );
-    sections.forEach((id) => {
-      const element = document.getElementById(id);
-      if (element) observer.observe(element);
-    });
-    return () => {
-      sections.forEach((id) => {
-        const element = document.getElementById(id);
-        if (element) observer.unobserve(element);
-      });
-    };
-  }, []);
+  const pathname = usePathname();
 
   return (
     <>
       <style>{underlineStyle}</style>
       <nav className="navbar" style={navbarStyle}>
-        <div className="brand" style={brandStyle}>
-          {/* Pastikan Anda memiliki ikon ini di folder /public */}
+        <Link href="/" className="brand" style={brandStyle}>
           <span>Dryness Banana</span>
-        </div>
+        </Link>
         <div className="nav-links" style={navLinksStyle}>
-          <a
-            href="#home"
+          <Link
+            href="/"
             className="nav-link"
-            style={activeSection === 'home' ? activeLinkStyle : linkStyle}
-            aria-current={activeSection === 'home' ? 'true' : undefined}
+            style={pathname === '/' ? activeLinkStyle : linkStyle}
+            aria-current={pathname === '/' ? 'true' : undefined}
           >
             Home
-          </a>
-          <a
-            href="#history"
+          </Link>
+          <Link
+            href="/history"
             className="nav-link"
-            style={activeSection === 'history' ? activeLinkStyle : linkStyle}
-            aria-current={activeSection === 'history' ? 'true' : undefined}
+            style={pathname === '/history' ? activeLinkStyle : linkStyle}
+            aria-current={pathname === '/history' ? 'true' : undefined}
           >
             History
-          </a>
-          <a
-            href="#about"
+          </Link>
+          <Link
+            href="/about"
             className="nav-link"
-            style={activeSection === 'about' ? activeLinkStyle : linkStyle}
-            aria-current={activeSection === 'about' ? 'true' : undefined}
+            style={pathname === '/about' ? activeLinkStyle : linkStyle}
+            aria-current={pathname === '/about' ? 'true' : undefined}
           >
             About
-          </a>
-          <a
-            href="#banana-facts"
+          </Link>
+          <Link
+            href="/banana-facts"
             className="nav-link"
-            style={activeSection === 'banana-facts' ? activeLinkStyle : linkStyle}
-            aria-current={activeSection === 'banana-facts' ? 'true' : undefined}
+            style={pathname === '/banana-facts' ? activeLinkStyle : linkStyle}
+            aria-current={pathname === '/banana-facts' ? 'true' : undefined}
           >
             BananaFacts
-          </a>
+          </Link>
         </div>
       </nav>
     </>

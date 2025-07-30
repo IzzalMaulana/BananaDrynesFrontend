@@ -1,12 +1,12 @@
 import Navbar from "../components/Navbar";
-import BananaFactsSection from "../components/BananaFactsSection";
+import HistorySection from "../components/HistorySection";
 import Footer from "../components/Footer";
 
-export default function BananaFactsPage() {
+export default function HistoryPage() {
   return (
     <main style={{ background: "#fafafa", minHeight: "100vh" }}>
       <Navbar />
-      <BananaFactsSection />
+      <HistorySection />
       <Footer />
     </main>
   );

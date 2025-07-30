@@ -215,11 +215,11 @@ export default function HistorySection() {
                 background: '#fbbf24',
                 color: '#422006',
                 fontWeight: 600,
-                border: 'none',
+                      border: 'none',
                 borderRadius: '10px',
                 padding: '0.7rem 1.5rem',
                 fontSize: '1rem',
-                cursor: 'pointer',
+                      cursor: 'pointer',
                 boxShadow: '0 2px 8px rgba(251, 191, 36, 0.10)',
                 transition: 'all 0.2s',
               }}
@@ -239,8 +239,8 @@ export default function HistorySection() {
               height: '100vh',
               background: 'rgba(0,0,0,0.25)',
               zIndex: 1000,
-              display: 'flex',
-              alignItems: 'center',
+                      display: 'flex',
+                      alignItems: 'center',
               justifyContent: 'center',
             }}
             onClick={() => setShowModal(false)}
@@ -337,12 +337,12 @@ export default function HistorySection() {
                         }
                       </div>
                     </div>
-                  </div>
+                </div>
                 ))}
               </div>
             </div>
-          </div>
-        )}
+            </div>
+          )}
       </div>
       <style>{`.spinner { animation: spin 1s linear infinite; } @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </section>

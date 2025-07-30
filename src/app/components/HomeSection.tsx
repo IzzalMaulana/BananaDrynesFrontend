@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { FiUploadCloud, FiArrowRight, FiLoader, FiRefreshCw, FiAlertCircle, FiX } from "react-icons/fi";
+import { FiUploadCloud, FiArrowRight, FiLoader, FiRefreshCw, FiAlertCircle, FiX, FiClock } from "react-icons/fi";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 // Animasi CSS
 const animationStyles = `
@@ -48,6 +49,7 @@ type HistoryItem = {
 };
 
 export default function HomeSection() {
+  const router = useRouter();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null); // <-- simpan file
   const [resultImagePreview, setResultImagePreview] = useState<string | null>(null); // <-- baru
@@ -133,43 +135,43 @@ export default function HomeSection() {
 
   const handleIdentify = async () => {
     if (!imageFile) return;
-    setIsLoading(true);
+      setIsLoading(true);
     setResult(null);
     setError(null);
     setResultImagePreview(imagePreview); // simpan preview untuk hasil analisis
     resultImagePreviewRef.current = imagePreview; // simpan ref untuk revoke nanti
-    const formData = new FormData();
+      const formData = new FormData();
     formData.append('image', imageFile);
     try {
       const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/predict`;
-
+      
   const response = await fetch(apiUrl, {
-    method: 'POST',
-    body: formData,
-  });
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-      }
-      const data = await response.json();
-      if (data.error) {
-        throw new Error(data.error);
-      }
-      setResult({
-        classification: data.classification,
-        accuracy: Math.round(data.accuracy * 10) / 10,
-        drynessLevel: data.drynessLevel,
-        is_banana: data.is_banana
-      });
+          method: 'POST',
+          body: formData,
+        });
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
+        const data = await response.json();
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        setResult({
+          classification: data.classification,
+          accuracy: Math.round(data.accuracy * 10) / 10,
+          drynessLevel: data.drynessLevel,
+          is_banana: data.is_banana
+        });
       // Setelah identifikasi, hapus preview dan file dari card unggah gambar
       setImagePreview(null);
       setImageFile(null);
       // JANGAN revokeObjectURL di sini!
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Gagal menganalisis gambar');
-      setResult(null);
-    } finally {
-      setIsLoading(false);
-    }
+      } catch (error) {
+        setError(error instanceof Error ? error.message : 'Gagal menganalisis gambar');
+        setResult(null);
+      } finally {
+        setIsLoading(false);
+      }
   };
 
   const getBadgeColor = (classification: string) => {
@@ -284,9 +286,9 @@ export default function HomeSection() {
                 {imagePreview ? (
                   <div style={{ position: 'relative', display: 'inline-block' }}>
                     <img src={imagePreview} alt="Preview" style={{ maxWidth: 180, maxHeight: 180, borderRadius: 12, margin: '0 auto', display: 'block', width: 180, height: 'auto' }} />
-                    <button
+                <button 
                       onClick={e => { e.stopPropagation(); handleReset(); }}
-                      style={{
+                  style={{ 
                         position: 'absolute',
                         top: 4,
                         right: 4,
@@ -306,7 +308,7 @@ export default function HomeSection() {
                       type="button"
                     >
                       <FiX size={18} color="#b91c1c" />
-                    </button>
+                </button>
                   </div>
                 ) : (
                   <>Seret & lepas gambar di sini atau klik untuk memilih file</>
@@ -370,6 +372,41 @@ export default function HomeSection() {
                           </p>
                         </div>
                       )}
+                      
+                      {/* Tombol Lihat History */}
+                      <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center' }}>
+                        <button
+                          onClick={() => router.push('/history')}
+                          style={{
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '12px',
+                            padding: '0.75rem 1.5rem',
+                            fontSize: '1rem',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+                            transition: 'all 0.2s ease',
+                            minWidth: '160px',
+                            justifyContent: 'center'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                            e.currentTarget.style.boxShadow = '0 6px 16px rgba(102, 126, 234, 0.4)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)';
+                          }}
+                        >
+                          <FiClock size={18} />
+                          Lihat History
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ) : (
