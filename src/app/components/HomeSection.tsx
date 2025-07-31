@@ -121,8 +121,73 @@ export default function HomeSection({ onUploadSuccess }: { onUploadSuccess: () =
     <>
       <style>{animationStyles}</style>
       <input type="file" ref={galleryInputRef} onChange={handleGalleryImageChange} style={{ display: "none" }} accept="image/*" />
-      <section id="home" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "5rem 2.5rem", background: "linear-gradient(135deg, #f0fdfa 0%, #dcfce7 100%)" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", alignItems: "start", gap: "3rem", width: "100%", maxWidth: "1200px" }}>
+      
+      {/* Header Section dengan Judul dan Gambar */}
+      <section style={{ 
+        background: "linear-gradient(135deg, #f0fdfa 0%, #dcfce7 100%)", 
+        padding: "4rem 2.5rem 2rem 2.5rem",
+        textAlign: "center"
+      }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          <h1 style={{ 
+            fontSize: "3.5rem", 
+            fontWeight: 800, 
+            color: "#1a202c", 
+            marginBottom: "1rem",
+            background: "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text"
+          }}>
+            Dryness Banana
+          </h1>
+          <p style={{ 
+            fontSize: "1.25rem", 
+            color: "#4a5568", 
+            marginBottom: "2rem",
+            maxWidth: "600px",
+            margin: "0 auto 2rem auto",
+            lineHeight: "1.6"
+          }}>
+            Deteksi tingkat kekeringan pisang dengan teknologi AI yang canggih. 
+            Upload gambar pisang Anda dan dapatkan hasil analisis yang akurat dalam hitungan detik.
+          </p>
+          
+          {/* Gambar Pisang */}
+          <div style={{ 
+            display: "flex", 
+            justifyContent: "center", 
+            marginBottom: "3rem" 
+          }}>
+            <Image 
+              src="/assets/images/pisang_home.png" 
+              alt="Pisang" 
+              width={300} 
+              height={300} 
+              style={{ 
+                borderRadius: "20px",
+                boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                objectFit: "cover"
+              }}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Section Upload dan Analisis */}
+      <section id="home" style={{ 
+        padding: "2rem 2.5rem 5rem 2.5rem", 
+        background: "linear-gradient(135deg, #f0fdfa 0%, #dcfce7 100%)" 
+      }}>
+        <div style={{ 
+          display: "grid", 
+          gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", 
+          alignItems: "start", 
+          gap: "3rem", 
+          width: "100%", 
+          maxWidth: "1200px", 
+          margin: "0 auto" 
+        }}>
             
             {/* Kolom Upload */}
             <div style={{ background: "#fff", borderRadius: "20px", boxShadow: "0 8px 32px 0 rgba(0,0,0,0.08)", padding: "2.5rem" }}>
@@ -165,31 +230,45 @@ export default function HomeSection({ onUploadSuccess }: { onUploadSuccess: () =
                                 <span style={{ fontWeight: 700, color: getBadgeColor(result.classification).color }}>{result.accuracy}%</span>
                             </div>
                             
-                            {/* === TOMBOL LIHAT HISTORY DITAMBAHKAN DI SINI === */}
-                            <button
+                            {/* Tombol Lihat History */}
+                            <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center' }}>
+                              <button
                                 onClick={() => router.push('/history')}
                                 style={{
-                                    marginTop: '1.5rem',
-                                    background: '#4f46e5',
-                                    color: 'white',
-                                    fontWeight: 600,
-                                    border: 'none',
-                                    borderRadius: '10px',
-                                    padding: '0.7rem 1.5rem',
-                                    cursor: 'pointer',
-                                    fontSize: '1rem',
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem'
+                                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                  color: 'white',
+                                  border: 'none',
+                                  borderRadius: '12px',
+                                  padding: '0.75rem 1.5rem',
+                                  fontSize: '1rem',
+                                  fontWeight: 600,
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.5rem',
+                                  boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+                                  transition: 'all 0.2s ease',
+                                  minWidth: '160px',
+                                  justifyContent: 'center'
                                 }}
-                            >
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.transform = 'translateY(-2px)';
+                                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(102, 126, 234, 0.4)';
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.transform = 'translateY(0)';
+                                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)';
+                                }}
+                              >
                                 <FiClock size={18} />
                                 Lihat History
-                            </button>
-
+                              </button>
+                            </div>
                         </div>
                     ) : (
-                        <p style={{ color: "#718096" }}>Hasil deteksi akan muncul di sini.</p>
+                        <p style={{ color: "#718096", fontStyle: "italic" }}>
+                            Hasil deteksi akan muncul di sini.
+                        </p>
                     )}
                 </div>
             </div>
