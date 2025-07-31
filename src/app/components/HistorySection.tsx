@@ -83,11 +83,11 @@ export default function HistorySection({
 
   return (
     <>
-      <section id="history" style={{ padding: "5rem 2.5rem", background: "#ffffff" }}>
-        <div style={{ maxWidth: "900px", margin: "0 auto", textAlign: "center" }}>
+    <section id="history" style={{ padding: "5rem 2.5rem", background: "#ffffff" }}>
+      <div style={{ maxWidth: "900px", margin: "0 auto", textAlign: "center" }}>
           <h2 style={{ fontSize: "2.8rem", fontWeight: 800, color: "#1a202c", marginBottom: "1rem" }}>
-            Riwayat Analisis
-          </h2>
+          Riwayat Analisis
+        </h2>
           
           {loading && (
             <div style={{ textAlign: 'center', padding: '2rem' }}>
@@ -124,16 +124,16 @@ export default function HistorySection({
                   gap: '1rem'
                 }}>
                   {/* Gambar */}
-                  <div style={{ flexShrink: 0 }}>
-                    <Image 
+                <div style={{ flexShrink: 0 }}>
+                  <Image
                       src={`${baseUrl}/uploads/${item.filename}`} 
                       alt={item.filename}
-                      width={80} 
-                      height={80} 
+                    width={80}
+                    height={80}
                       style={{ borderRadius: '12px', objectFit: 'cover' }}
                       unoptimized
-                    />
-                  </div>
+                  />
+                </div>
 
                   {/* Info */}
                   <div style={{ flex: 1, textAlign: 'left' }}>
@@ -141,24 +141,24 @@ export default function HistorySection({
                       <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#1a202c', margin: 0 }}>
                         {item.filename}
                       </h3>
-                      <span style={{ 
+                    <span style={{
                         ...getBadgeColor(item.classification), 
-                        padding: '0.25rem 0.75rem', 
-                        borderRadius: '9999px', 
+                        padding: '0.25rem 0.75rem',
+                        borderRadius: '9999px',
                         fontSize: '0.85rem', 
-                        fontWeight: 600 
+                        fontWeight: 600
                       }}>
                         {getDrynessLevelText(item.classification)}
-                      </span>
-                    </div>
+                    </span>
+                  </div>
                     <p style={{ fontSize: '0.9rem', color: '#64748b', margin: '0.25rem 0' }}>
                       Keyakinan: <strong>{item.accuracy}%</strong>
                     </p>
                     <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: 0 }}>
                       {item.created_at}
                     </p>
-                  </div>
-
+                </div>
+                
                   {/* Tombol Hapus */}
                   <button
                     onClick={() => handleDelete(item.id)}
@@ -172,9 +172,9 @@ export default function HistorySection({
                       transition: 'background 0.2s'
                     }}
                     title="Hapus riwayat"
-                  >
-                    <FiTrash2 size={18} />
-                  </button>
+                   >
+                     <FiTrash2 size={18} />
+                   </button>
                 </div>
               ))}
             </div>
@@ -308,8 +308,8 @@ export default function HistorySection({
                 </div>
               ))}
             </div>
-          </div>
         </div>
+      </div>
       )}
     </>
   );
