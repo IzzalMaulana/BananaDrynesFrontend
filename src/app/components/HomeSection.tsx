@@ -308,7 +308,7 @@ export default function HomeSection() {
                       }}
                       title="Hapus gambar"
                       type="button"
-                    >
+                >
                       <FiX size={18} color="#b91c1c" />
                 </button>
                   </div>
