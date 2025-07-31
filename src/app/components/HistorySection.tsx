@@ -18,11 +18,28 @@ interface HistoryItem {
 
 const getBadgeColor = (classification: string) => {
   switch (classification) {
-    case "Kering": return { background: "#fef2f2", color: "#b91c1c" };
-    case "Sedang": return { background: "#fffbeb", color: "#b45309" };
-    case "Basah": return { background: "#f0fdf4", color: "#15803d" };
-    case "Gambar Bukan Pisang": return { background: "#f1f5f9", color: "#475569" };
-    default: return { background: "#f1f5f9", color: "#475569" };
+    case "Kering":
+    case "kering":
+    case "DRY":
+    case "dry":
+      return { background: "#fef2f2", color: "#b91c1c" };
+    case "Sedang":
+    case "sedang":
+    case "MEDIUM":
+    case "medium":
+      return { background: "#fffbeb", color: "#b45309" };
+    case "Basah":
+    case "basah":
+    case "WET":
+    case "wet":
+      return { background: "#f0fdf4", color: "#15803d" };
+    case "Gambar Bukan Pisang":
+    case "gambar bukan pisang":
+    case "NOT_BANANA":
+    case "not_banana":
+      return { background: "#f1f5f9", color: "#475569" };
+    default: 
+      return { background: "#f1f5f9", color: "#475569" };
   }
 };
 
@@ -74,10 +91,55 @@ export default function HistorySection({
 
   const getDrynessLevelText = (classification: string) => {
     switch (classification) {
-      case "Basah": return "60–80%";
-      case "Sedang": return "30–60%";
-      case "Kering": return "0–30%";
-      default: return classification;
+      case "Basah":
+      case "basah":
+      case "WET":
+      case "wet":
+        return "Basah";
+      case "Sedang":
+      case "sedang":
+      case "MEDIUM":
+      case "medium":
+        return "Sedang";
+      case "Kering":
+      case "kering":
+      case "DRY":
+      case "dry":
+        return "Kering";
+      case "Gambar Bukan Pisang":
+      case "gambar bukan pisang":
+      case "NOT_BANANA":
+      case "not_banana":
+        return "Bukan Pisang";
+      default: 
+        return classification; // Tampilkan nilai asli jika tidak cocok
+    }
+  };
+
+  const getWaterContent = (classification: string) => {
+    switch (classification) {
+      case "Basah":
+      case "basah":
+      case "WET":
+      case "wet":
+        return "60–80%";
+      case "Sedang":
+      case "sedang":
+      case "MEDIUM":
+      case "medium":
+        return "30–60%";
+      case "Kering":
+      case "kering":
+      case "DRY":
+      case "dry":
+        return "0–30%";
+      case "Gambar Bukan Pisang":
+      case "gambar bukan pisang":
+      case "NOT_BANANA":
+      case "not_banana":
+        return "N/A";
+      default: 
+        return "N/A";
     }
   };
 
@@ -118,63 +180,121 @@ export default function HistorySection({
                   borderRadius: '16px', 
                   padding: '1.5rem', 
                   boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-                  border: '1px solid #e2e8f0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '1rem'
+                  border: '1px solid #e2e8f0'
                 }}>
-                  {/* Gambar */}
-                <div style={{ flexShrink: 0 }}>
-                  <Image
-                      src={`${baseUrl}/uploads/${item.filename}`} 
-                      alt={item.filename}
-                    width={80}
-                    height={80}
-                      style={{ borderRadius: '12px', objectFit: 'cover' }}
-                      unoptimized
-                  />
-                </div>
-
-                  {/* Info */}
-                  <div style={{ flex: 1, textAlign: 'left' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                      <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#1a202c', margin: 0 }}>
-                        {item.filename}
-                      </h3>
-                    <span style={{
-                        ...getBadgeColor(item.classification), 
-                        padding: '0.25rem 0.75rem',
-                        borderRadius: '9999px',
-                        fontSize: '0.85rem', 
-                        fontWeight: 600
-                      }}>
-                        {getDrynessLevelText(item.classification)}
-                    </span>
+                  {/* Header dengan nama file dan tombol hapus */}
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    marginBottom: '1rem',
+                    paddingBottom: '0.75rem',
+                    borderBottom: '1px solid #e2e8f0'
+                  }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#1a202c', margin: 0 }}>
+                      📁 {item.filename}
+                    </h3>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#ef4444',
+                        cursor: 'pointer',
+                        padding: '0.5rem',
+                        borderRadius: '50%',
+                        transition: 'background 0.2s'
+                      }}
+                      title="Hapus riwayat"
+                    >
+                      <FiTrash2 size={18} />
+                    </button>
                   </div>
-                    <p style={{ fontSize: '0.9rem', color: '#64748b', margin: '0.25rem 0' }}>
-                      Keyakinan: <strong>{item.accuracy}%</strong>
-                    </p>
-                    <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: 0 }}>
-                      {item.created_at}
-                    </p>
-                </div>
-                
-                  {/* Tombol Hapus */}
-                  <button
-                    onClick={() => handleDelete(item.id)}
-                    style={{
-                      background: 'transparent',
-                      border: 'none',
-                      color: '#ef4444',
-                      cursor: 'pointer',
-                      padding: '0.5rem',
-                      borderRadius: '50%',
-                      transition: 'background 0.2s'
-                    }}
-                    title="Hapus riwayat"
-                   >
-                     <FiTrash2 size={18} />
-                   </button>
+
+                  {/* Konten utama */}
+                  <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
+                    {/* Gambar */}
+                    <div style={{ flexShrink: 0 }}>
+                      <Image
+                        src={`${baseUrl}/uploads/${item.filename}`} 
+                        alt={item.filename}
+                        width={120}
+                        height={120}
+                        style={{ borderRadius: '12px', objectFit: 'cover' }}
+                        unoptimized
+                      />
+                    </div>
+
+                    {/* Informasi detail */}
+                    <div style={{ flex: 1, display: 'grid', gap: '0.75rem' }}>
+                      {/* Tingkat Kekeringan */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 500, minWidth: '120px' }}>
+                          🍌 Tingkat Kekeringan:
+                        </span>
+                        <span style={{
+                          ...getBadgeColor(item.classification), 
+                          padding: '0.25rem 0.75rem',
+                          borderRadius: '9999px',
+                          fontSize: '0.85rem', 
+                          fontWeight: 600
+                        }}>
+                          {getDrynessLevelText(item.classification)}
+                        </span>
+                      </div>
+
+                      {/* Kadar Air */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 500, minWidth: '120px' }}>
+                          💧 Kadar Air:
+                        </span>
+                        <span style={{
+                          background: '#f0f9ff',
+                          color: '#0369a1',
+                          padding: '0.25rem 0.75rem',
+                          borderRadius: '9999px',
+                          fontSize: '0.85rem',
+                          fontWeight: 600
+                        }}>
+                          {getWaterContent(item.classification)}
+                        </span>
+                      </div>
+
+                      {/* Akurasi */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 500, minWidth: '120px' }}>
+                          🎯 Akurasi:
+                        </span>
+                        <span style={{
+                          background: '#f0fdf4',
+                          color: '#15803d',
+                          padding: '0.25rem 0.75rem',
+                          borderRadius: '9999px',
+                          fontSize: '0.85rem',
+                          fontWeight: 600
+                        }}>
+                          {item.accuracy}%
+                        </span>
+                      </div>
+
+                      {/* Tanggal Upload */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 500, minWidth: '120px' }}>
+                          📅 Tanggal Upload:
+                        </span>
+                        <span style={{
+                          background: '#fef3c7',
+                          color: '#92400e',
+                          padding: '0.25rem 0.75rem',
+                          borderRadius: '9999px',
+                          fontSize: '0.85rem',
+                          fontWeight: 500
+                        }}>
+                          {item.created_at}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -276,34 +396,52 @@ export default function HistorySection({
                   background: '#f8fafc', 
                   borderRadius: '12px', 
                   padding: '1rem', 
-                  border: '1px solid #e2e8f0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '1rem'
+                  border: '1px solid #e2e8f0'
                 }}>
-                  <Image 
-                    src={`${baseUrl}/uploads/${item.filename}`} 
-                    alt={item.filename}
-                    width={60} 
-                    height={60} 
-                    style={{ borderRadius: '8px', objectFit: 'cover' }}
-                    unoptimized
-                  />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontWeight: 600 }}>{item.filename}</span>
-                      <span style={{ 
-                        ...getBadgeColor(item.classification), 
-                        padding: '0.25rem 0.5rem', 
-                        borderRadius: '9999px', 
-                        fontSize: '0.8rem' 
-                      }}>
-                        {getDrynessLevelText(item.classification)}
-                      </span>
+                  {/* Header */}
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    marginBottom: '0.75rem',
+                    paddingBottom: '0.5rem',
+                    borderBottom: '1px solid #e2e8f0'
+                  }}>
+                    <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>📁 {item.filename}</span>
+                    <span style={{ 
+                      ...getBadgeColor(item.classification), 
+                      padding: '0.25rem 0.5rem', 
+                      borderRadius: '9999px', 
+                      fontSize: '0.8rem' 
+                    }}>
+                      {getDrynessLevelText(item.classification)}
+                    </span>
+                  </div>
+
+                  {/* Konten */}
+                  <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                    <Image 
+                      src={`${baseUrl}/uploads/${item.filename}`} 
+                      alt={item.filename}
+                      width={80} 
+                      height={80} 
+                      style={{ borderRadius: '8px', objectFit: 'cover' }}
+                      unoptimized
+                    />
+                    <div style={{ flex: 1, display: 'grid', gap: '0.5rem', fontSize: '0.85rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#64748b' }}>💧 Kadar Air:</span>
+                        <span style={{ fontWeight: 600, color: '#0369a1' }}>{getWaterContent(item.classification)}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#64748b' }}>🎯 Akurasi:</span>
+                        <span style={{ fontWeight: 600, color: '#15803d' }}>{item.accuracy}%</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#64748b' }}>📅 Upload:</span>
+                        <span style={{ fontWeight: 500, color: '#92400e', fontSize: '0.8rem' }}>{item.created_at}</span>
+                      </div>
                     </div>
-                    <p style={{ fontSize: '0.85rem', color: '#64748b', margin: '0.25rem 0 0 0' }}>
-                      Keyakinan: {item.accuracy}% • {item.created_at}
-                    </p>
                   </div>
                 </div>
               ))}
