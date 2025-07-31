@@ -21,7 +21,7 @@ interface HistoryItem {
 }
 
 export default function Home() {
-  // State dan fungsi history dikelola di sini
+  // State dan fungsi history tetap di sini untuk ditampilkan sebagai pratinjau
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [historyLoading, setHistoryLoading] = useState<boolean>(false);
   const [historyError, setHistoryError] = useState<string | null>(null);

@@ -18,6 +18,7 @@ type AnalysisResult = {
   classification: string;
   accuracy: number;
   drynessLevel: number;
+  filename: string;
 };
 
 // Terima 'onUploadSuccess' dari komponen induk
@@ -44,8 +45,8 @@ export default function HomeSection({ onUploadSuccess }: { onUploadSuccess: () =
 
   const processImageFile = (file: File) => {
     if (file) {
-      if (file.size > 10 * 1024 * 1024) {
-        setError("Ukuran file terlalu besar. Maksimal 10MB.");
+      if (file.size > 20 * 1024 * 1024) { // Batas 20MB
+        setError("Ukuran file terlalu besar. Maksimal 20MB.");
         return;
       }
       if (!file.type.startsWith('image/')) {
@@ -121,11 +122,11 @@ export default function HomeSection({ onUploadSuccess }: { onUploadSuccess: () =
       <style>{animationStyles}</style>
       <input type="file" ref={galleryInputRef} onChange={handleGalleryImageChange} style={{ display: "none" }} accept="image/*" />
       <section id="home" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "5rem 2.5rem", background: "linear-gradient(135deg, #f0fdfa 0%, #dcfce7 100%)" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", alignItems: "center", gap: "3rem", width: "100%", maxWidth: "1200px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", alignItems: "start", gap: "3rem", width: "100%", maxWidth: "1200px" }}>
             
             {/* Kolom Upload */}
             <div style={{ background: "#fff", borderRadius: "20px", boxShadow: "0 8px 32px 0 rgba(0,0,0,0.08)", padding: "2.5rem" }}>
-                <h3 style={{ fontSize: "1.75rem", fontWeight: 700, color: "#2d3748", marginBottom: "1.5rem" }}>Unggah Gambar</h3>
+                <h3 style={{ fontSize: "1.75rem", fontWeight: 700, color: "#2d3748", marginBottom: "1.5rem", textAlign: "center" }}>Unggah Gambar</h3>
                 <div 
                     onClick={triggerGalleryInput} 
                     onDrop={handleDrop} 
@@ -155,14 +156,37 @@ export default function HomeSection({ onUploadSuccess }: { onUploadSuccess: () =
                     {isLoading ? (
                         <div style={{ textAlign: 'center' }}><FiLoader size={32} className="spinner" /><p>Menganalisis...</p></div>
                     ) : result ? (
-                        <div style={{ textAlign: 'center' }}>
+                        <div style={{ textAlign: 'center', width: '100%' }}>
                             {resultImagePreview && <Image src={resultImagePreview} alt="Hasil" width={200} height={200} style={{ borderRadius: '12px', objectFit: 'cover', marginBottom: '1rem' }} />}
                             <p style={{ marginBottom: '0.5rem' }}>Klasifikasi:</p>
                             <span style={{ ...getBadgeColor(result.classification), padding: '0.4rem 1.1rem', borderRadius: '9999px', fontSize: '1.25rem', fontWeight: 700, display: 'inline-block', marginBottom: '1.2rem' }}>{result.classification}</span>
-                            <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '0.9rem', display: 'flex', justifyContent: 'space-between' }}>
+                            <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '0.9rem', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                                 <span>Keyakinan</span>
                                 <span style={{ fontWeight: 700, color: getBadgeColor(result.classification).color }}>{result.accuracy}%</span>
                             </div>
+                            
+                            {/* === TOMBOL LIHAT HISTORY DITAMBAHKAN DI SINI === */}
+                            <button
+                                onClick={() => router.push('/history')}
+                                style={{
+                                    marginTop: '1.5rem',
+                                    background: '#4f46e5',
+                                    color: 'white',
+                                    fontWeight: 600,
+                                    border: 'none',
+                                    borderRadius: '10px',
+                                    padding: '0.7rem 1.5rem',
+                                    cursor: 'pointer',
+                                    fontSize: '1rem',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }}
+                            >
+                                <FiClock size={18} />
+                                Lihat History
+                            </button>
+
                         </div>
                     ) : (
                         <p style={{ color: "#718096" }}>Hasil deteksi akan muncul di sini.</p>
