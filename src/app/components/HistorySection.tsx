@@ -78,14 +78,52 @@ export default function HistorySection({
   // Tampilkan semua jika di halaman history, atau 3 jika di halaman utama
   const displayedHistory = isFullPage ? history : history.slice(0, 3);
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus riwayat ini?')) return;
+  const deleteHistory = async (id: number) => {
     try {
-      const res = await fetch(`${apiUrl}/history/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Gagal menghapus data');
-      setHistory(prevHistory => prevHistory.filter(item => item.id !== id));
-    } catch (err) {
-      alert('Gagal menghapus riwayat.');
+      const response = await fetch(`${apiUrl}/history/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        // Refresh history list
+        fetchHistory();
+        alert('History berhasil dihapus!');
+      } else {
+        const error = await response.json();
+        alert('Error: ' + error.error);
+      }
+    } catch (error) {
+      console.error('Error deleting history:', error);
+      alert('Gagal menghapus history');
+    }
+  };
+
+  const clearAllHistory = async () => {
+    if (confirm('Apakah Anda yakin ingin menghapus semua history?')) {
+      try {
+        const response = await fetch(`${apiUrl}/history/clear`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          alert(`Berhasil menghapus ${result.deleted_records} records dan ${result.deleted_files} files`);
+          // Refresh history list
+          fetchHistory();
+        } else {
+          const error = await response.json();
+          alert('Error: ' + error.error);
+        }
+      } catch (error) {
+        console.error('Error clearing history:', error);
+        alert('Gagal menghapus history');
+      }
     }
   };
 
@@ -151,6 +189,32 @@ export default function HistorySection({
           Riwayat Analisis
         </h2>
           
+          {!loading && !error && displayedHistory.length > 0 && (
+            <div style={{ marginBottom: '2rem' }}>
+              <button
+                onClick={clearAllHistory}
+                style={{
+                  background: '#ef4444',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '8px',
+                  fontSize: '0.9rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'background 0.2s',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}
+                title="Hapus semua riwayat"
+              >
+                <FiTrash2 size={16} />
+                Hapus Semua History
+              </button>
+            </div>
+          )}
+          
           {loading && (
             <div style={{ textAlign: 'center', padding: '2rem' }}>
               <FiRefreshCw size={32} className="spinner" style={{ margin: '0 auto 0.5rem auto' }} />
@@ -195,7 +259,7 @@ export default function HistorySection({
                       📁 {item.filename}
                     </h3>
                     <button
-                      onClick={() => handleDelete(item.id)}
+                      onClick={() => deleteHistory(item.id)}
                       style={{
                         background: 'transparent',
                         border: 'none',
