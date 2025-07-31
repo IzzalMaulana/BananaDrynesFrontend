@@ -3,9 +3,9 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import HistorySection from '../components/HistorySection';
-import Footer from '../components/Footer';
-import Navbar from '../components/Navbar';
+import Navbar from "../components/Navbar";
+import HistorySection from "../components/HistorySection";
+import Footer from "../components/Footer";
 
 // Tipe data untuk item history
 interface HistoryItem {
@@ -51,7 +51,7 @@ export default function HistoryPage() {
         error={historyError} 
         fetchHistory={fetchHistory} 
         setHistory={setHistory}
-        isFullPage={true} // Properti tambahan untuk menandai ini halaman penuh
+        isFullPage={true}
       />
       <Footer />
     </main>
