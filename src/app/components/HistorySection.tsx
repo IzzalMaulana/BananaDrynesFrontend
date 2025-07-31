@@ -146,27 +146,7 @@ export default function HistorySection({
     }
   };
 
-  // Test function untuk debugging
-  const testDeleteEndpoint = async (id: number) => {
-    console.log(`Testing DELETE endpoint for ID: ${id}`);
-    try {
-      const response = await fetch(`${apiUrl}/test-delete/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
-      });
-      
-      console.log(`Test response status: ${response.status}`);
-      const result = await response.json();
-      console.log('Test result:', result);
-      alert(`Test successful: ${result.message}`);
-    } catch (error) {
-      console.error('Test failed:', error);
-      alert('Test failed - Network error');
-    }
-  };
+
 
   const getDrynessLevelText = (classification: string) => {
     switch (classification) {
@@ -230,34 +210,7 @@ export default function HistorySection({
           Riwayat Analisis
         </h2>
           
-          {/* Debug Info - Hapus setelah testing selesai */}
-          <div style={{ 
-            background: '#f0f9ff', 
-            border: '1px solid #0ea5e9', 
-            borderRadius: '8px', 
-            padding: '1rem', 
-            marginBottom: '2rem',
-            fontSize: '0.9rem'
-          }}>
-            <p><strong>Debug Info:</strong></p>
-            <p>API URL: {apiUrl}</p>
-            <p>Base URL: {baseUrl}</p>
-            <p>History Count: {history.length}</p>
-            <button 
-              onClick={() => testDeleteEndpoint(1)}
-              style={{
-                background: '#0ea5e9',
-                color: 'white',
-                border: 'none',
-                padding: '0.5rem 1rem',
-                borderRadius: '4px',
-                fontSize: '0.8rem',
-                cursor: 'pointer'
-              }}
-            >
-              Test DELETE Endpoint
-            </button>
-          </div>
+
           
           {!loading && !error && displayedHistory.length > 0 && (
             <div style={{ marginBottom: '2rem' }}>
@@ -328,39 +281,21 @@ export default function HistorySection({
                     <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#1a202c', margin: 0 }}>
                       📁 {item.filename}
                     </h3>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      {/* Debug button - Hapus setelah testing selesai */}
-                      <button
-                        onClick={() => testDeleteEndpoint(item.id)}
-                        style={{
-                          background: 'transparent',
-                          border: '1px solid #0ea5e9',
-                          color: '#0ea5e9',
-                          cursor: 'pointer',
-                          padding: '0.5rem',
-                          borderRadius: '4px',
-                          fontSize: '0.8rem'
-                        }}
-                        title="Test delete endpoint"
-                      >
-                        Test
-                      </button>
-                      <button
-                        onClick={() => deleteHistory(item.id)}
-                        style={{
-                          background: 'transparent',
-                          border: 'none',
-                          color: '#ef4444',
-                          cursor: 'pointer',
-                          padding: '0.5rem',
-                          borderRadius: '50%',
-                          transition: 'background 0.2s'
-                        }}
-                        title="Hapus riwayat"
-                      >
-                        <FiTrash2 size={18} />
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => deleteHistory(item.id)}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#ef4444',
+                        cursor: 'pointer',
+                        padding: '0.5rem',
+                        borderRadius: '50%',
+                        transition: 'background 0.2s'
+                      }}
+                      title="Hapus riwayat"
+                    >
+                      <FiTrash2 size={18} />
+                    </button>
                   </div>
 
                   {/* Konten utama */}
