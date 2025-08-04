@@ -38,7 +38,7 @@ const getBadgeColor = (classification: string) => {
     case "NOT_BANANA":
     case "not_banana":
       return { background: "#f1f5f9", color: "#475569" };
-    default: 
+    default:
       return { background: "#f1f5f9", color: "#475569" };
   }
 };
@@ -82,42 +82,9 @@ export default function HistorySection({
     console.log(`Attempting to delete history ID: ${id}`);
     console.log(`API URL: ${apiUrl}/history/${id}`);
     
-    try {
-      const response = await fetch(`${apiUrl}/history/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
-      });
-      
-      console.log(`Response status: ${response.status}`);
-      console.log(`Response headers:`, Object.fromEntries(response.headers.entries()));
-      
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Delete successful:', result);
-        // Refresh history list
-        fetchHistory();
-        alert('History berhasil dihapus!');
-      } else {
-        const error = await response.json();
-        console.error('Delete failed:', error);
-        alert('Error: ' + error.error);
-      }
-    } catch (error) {
-      console.error('Error deleting history:', error);
-      alert('Gagal menghapus history - Network error');
-    }
-  };
-
-  const clearAllHistory = async () => {
-    if (confirm('Apakah Anda yakin ingin menghapus semua history?')) {
-      console.log('Attempting to clear all history');
-      console.log(`API URL: ${apiUrl}/history/clear`);
-      
+    if (confirm('Apakah Anda yakin ingin menghapus riwayat ini?')) {
       try {
-        const response = await fetch(`${apiUrl}/history/clear`, {
+        const response = await fetch(`${apiUrl}/history/${id}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -126,21 +93,20 @@ export default function HistorySection({
         });
         
         console.log(`Response status: ${response.status}`);
-        console.log(`Response headers:`, Object.fromEntries(response.headers.entries()));
         
         if (response.ok) {
           const result = await response.json();
-          console.log('Clear all successful:', result);
-          alert(`Berhasil menghapus ${result.deleted_records} records dan ${result.deleted_files} files`);
+          console.log('Delete successful:', result);
           // Refresh history list
           fetchHistory();
+          alert('History berhasil dihapus!');
         } else {
           const error = await response.json();
-          console.error('Clear all failed:', error);
+          console.error('Delete failed:', error);
           alert('Error: ' + error.error);
         }
       } catch (error) {
-        console.error('Error clearing history:', error);
+        console.error('Error deleting history:', error);
         alert('Gagal menghapus history - Network error');
       }
     }
@@ -212,43 +178,19 @@ export default function HistorySection({
           
 
           
-          {!loading && !error && displayedHistory.length > 0 && (
-            <div style={{ marginBottom: '2rem' }}>
-              <button
-                onClick={clearAllHistory}
-                style={{
-                  background: '#ef4444',
-                  color: 'white',
-                  border: 'none',
-                  padding: '0.75rem 1.5rem',
-                  borderRadius: '8px',
-                  fontSize: '0.9rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'background 0.2s',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.5rem'
-                }}
-                title="Hapus semua riwayat"
-              >
-                <FiTrash2 size={16} />
-                Hapus Semua History
-              </button>
-            </div>
-          )}
+
           
           {loading && (
             <div style={{ textAlign: 'center', padding: '2rem' }}>
               <FiRefreshCw size={32} className="spinner" style={{ margin: '0 auto 0.5rem auto' }} />
               <p>Memuat riwayat...</p>
-            </div>
+                  </div>
           )}
 
           {error && (
             <div style={{ marginTop: "1rem", padding: "0.75rem", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: "8px", color: "#b91c1c", fontSize: "0.9rem" }}>
               {error}
-            </div>
+                  </div>
           )}
 
           {!loading && !error && displayedHistory.length === 0 && (
@@ -256,7 +198,7 @@ export default function HistorySection({
               <FiClock size={48} style={{ margin: '0 auto 1rem auto', opacity: 0.5 }} />
               <p style={{ fontSize: '1.1rem', margin: 0 }}>Belum ada riwayat analisis</p>
               <p style={{ fontSize: '0.9rem', margin: '0.5rem 0 0 0', opacity: 0.7 }}>Mulai dengan mengupload gambar pisang</p>
-            </div>
+                </div>
           )}
 
           {!loading && !error && displayedHistory.length > 0 && (
@@ -284,19 +226,19 @@ export default function HistorySection({
                     <button
                       onClick={() => deleteHistory(item.id)}
                       style={{
-                        background: 'transparent',
-                        border: 'none',
+                      background: 'transparent',
+                      border: 'none',
                         color: '#ef4444',
-                        cursor: 'pointer',
-                        padding: '0.5rem',
-                        borderRadius: '50%',
+                      cursor: 'pointer',
+                      padding: '0.5rem',
+                      borderRadius: '50%',
                         transition: 'background 0.2s'
-                      }}
-                      title="Hapus riwayat"
-                    >
-                      <FiTrash2 size={18} />
-                    </button>
-                  </div>
+                    }}
+                    title="Hapus riwayat"
+                   >
+                     <FiTrash2 size={18} />
+                   </button>
+                </div>
 
                   {/* Konten utama */}
                   <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
@@ -382,7 +324,7 @@ export default function HistorySection({
                       </div>
                     </div>
                   </div>
-                </div>
+              </div>
               ))}
             </div>
           )}
