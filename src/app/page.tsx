@@ -47,14 +47,14 @@ export default function Page() {
     <main style={{ background: "#fafafa", minHeight: "100vh" }}>
       <Navbar />
       <HomeSection />
-      <HistorySection 
+      {/* <HistorySection 
         history={history} 
         loading={historyLoading} 
         error={historyError} 
         fetchHistory={fetchHistory} 
         setHistory={setHistory}
         isFullPage={false}
-      />
+      /> */}
       <Footer />
     </main>
   );
