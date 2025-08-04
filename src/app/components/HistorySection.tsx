@@ -73,7 +73,7 @@ export default function HistorySection({
   const [showModal, setShowModal] = useState(false);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
-  const baseUrl = apiUrl.replace('/api', '');
+  const baseUrl = apiUrl;
   
   // Tampilkan semua jika di halaman history, atau 3 jika di halaman utama
   const displayedHistory = isFullPage ? history : history.slice(0, 3);
