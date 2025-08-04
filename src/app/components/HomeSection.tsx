@@ -3,7 +3,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { FiUploadCloud, FiArrowRight, FiLoader, FiRefreshCw, FiAlertCircle, FiX, FiClock, FiLightbulb } from "react-icons/fi";
+import { FiUploadCloud, FiArrowRight, FiLoader, FiRefreshCw, FiAlertCircle, FiX, FiClock, FiInfo } from "react-icons/fi";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -465,7 +465,7 @@ export default function HomeSection() {
                 border: "1px solid #fbbf24"
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', justifyContent: 'center' }}>
-                  <FiLightbulb size={28} color="#d97706" />
+                  <FiInfo size={28} color="#d97706" />
                   <h3 style={{ fontSize: "1.75rem", fontWeight: 700, color: "#92400e", margin: 0 }}>
                     Rekomendasi
                   </h3>
