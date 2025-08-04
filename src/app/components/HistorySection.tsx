@@ -72,7 +72,7 @@ export default function HistorySection({
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
 
-  const apiUrl = 'http://bananadrynes.my.id';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://bananadrynes.my.id';
   const baseUrl = apiUrl;
   
   // Tampilkan semua jika di halaman history, atau 3 jika di halaman utama
@@ -193,7 +193,7 @@ export default function HistorySection({
             fontWeight: "bold",
             margin: 0
           }}>
-            Riwayat Analisis
+          Riwayat Analisis
           </h1>
         </div>
         <p style={{ 
@@ -272,7 +272,7 @@ export default function HistorySection({
                   {/* Delete Button */}
                   <button
                     onClick={() => deleteHistory(item.id)}
-                    style={{
+                style={{
                       position: "absolute",
                       top: "10px",
                       right: "10px",
@@ -283,8 +283,8 @@ export default function HistorySection({
                       width: "32px",
                       height: "32px",
                       cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
+                  display: "flex",
+                  alignItems: "center",
                       justifyContent: "center",
                       transition: "all 0.2s ease"
                     }}
@@ -300,7 +300,7 @@ export default function HistorySection({
 
                   {/* Image */}
                   <div style={{ marginBottom: "1rem", textAlign: "center" }}>
-                    <Image
+                  <Image
                       src={`${baseUrl}/uploads/${item.filename}`}
                       alt={item.filename}
                       width={300}
@@ -312,8 +312,8 @@ export default function HistorySection({
                         height: "200px"
                       }}
                       unoptimized
-                    />
-                  </div>
+                  />
+                </div>
 
                   {/* File Info */}
                   <div style={{ marginBottom: "1rem" }}>
@@ -572,7 +572,7 @@ export default function HistorySection({
                 </p>
               </div>
             ))}
-          </div>
+            </div>
         </div>
       </div>
     )}

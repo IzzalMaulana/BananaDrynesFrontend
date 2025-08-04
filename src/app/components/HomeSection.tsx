@@ -76,35 +76,35 @@ export default function HomeSection() {
 
   const handleIdentify = async () => {
     if (!imageFile) return;
-    setIsLoading(true);
+      setIsLoading(true);
     setResult(null);
     setError(null);
     setResultImagePreview(imagePreview); // simpan preview untuk hasil analisis
     resultImagePreviewRef.current = imagePreview; // simpan ref untuk revoke nanti
 
-    const formData = new FormData();
+      const formData = new FormData();
     formData.append('image', imageFile);
     try {
-      const apiUrl = 'http://bananadrynes.my.id';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://bananadrynes.my.id';
       const response = await fetch(`${apiUrl}/predict`, { method: 'POST', body: formData });
-      
-      if (!response.ok) {
+        
+        if (!response.ok) {
           const errorData = await response.json().catch(() => ({ error: 'Server error: ' + response.status }));
           throw new Error(errorData.error || `Error ${response.status}`);
-      }
-      
-      const data = await response.json();
+        }
+        
+        const data = await response.json();
       if (data.error) throw new Error(data.error);
 
       setResult(data);
       setImagePreview(null); // Clear preview from upload card
       setImageFile(null); // Clear file from upload card
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Gagal menganalisis gambar');
-      setResult(null);
-    } finally {
-      setIsLoading(false);
-    }
+      } catch (error) {
+        setError(error instanceof Error ? error.message : 'Gagal menganalisis gambar');
+        setResult(null);
+      } finally {
+        setIsLoading(false);
+      }
   };
 
   const getBadgeColor = (classification: string) => {
@@ -370,7 +370,7 @@ export default function HomeSection() {
               {error}
             </div>
           )}
-        </div>
+          </div>
 
         {/* Result Card */}
         <div className="home-card" style={{ 
@@ -403,7 +403,7 @@ export default function HomeSection() {
                     <img
                       src={resultImagePreview}
                       alt="Analyzed"
-                      style={{
+                  style={{ 
                         width: "100%",
                         maxWidth: "300px",
                         height: "200px",
@@ -457,9 +457,9 @@ export default function HomeSection() {
                     fontSize: "1rem",
                     fontWeight: "bold",
                     cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "center", 
                     gap: "0.5rem"
                   }}
                 >
@@ -471,11 +471,11 @@ export default function HomeSection() {
               <div style={{ textAlign: "center", color: "#6b7280" }}>
                 <FiUploadCloud style={{ fontSize: "3rem", marginBottom: "1rem" }} />
                 <p>Hasil analisis akan muncul di sini</p>
+                </div>
+              )}
+            </div>
               </div>
-            )}
-          </div>
-        </div>
-      </div>
+                  </div>
 
       {/* Recommendation Card - Only show when there's a result */}
       {result && (
@@ -509,7 +509,7 @@ export default function HomeSection() {
                 fontSize: "0.9rem"
               }}>
                 {getDrynessLevelText(result.classification)}
-              </span>
+                      </span>
               Rekomendasi
             </h2>
 
@@ -554,7 +554,7 @@ export default function HomeSection() {
                   </p>
                 </div>
               ))}
-            </div>
+              </div>
 
             <div style={{
               marginTop: "1.5rem",
@@ -576,6 +576,6 @@ export default function HomeSection() {
           </div>
         </div>
       )}
-    </section>
+      </section>
   );
 }
