@@ -199,19 +199,17 @@ export default function HomeSection() {
         "• Pisang masih segar dan cocok untuk konsumsi langsung",
         "• Ideal untuk membuat smoothie atau jus pisang",
         "• Simpan di tempat kering untuk mencegah pembusukan",
-        "• Bisa diolah menjadi pisang goreng atau keripik"
+        "• Kadar air masih tinggi. Lanjutkan proses pengeringan.k"
       ],
       "Sedang": [
-        "• Pisang dalam kondisi optimal untuk berbagai olahan",
-        "• Cocok untuk membuat kue, roti, atau dessert",
-        "• Bisa disimpan beberapa hari lagi",
-        "• Ideal untuk campuran oatmeal atau yogurt"
+        "• Hampir kering. Lanjutkan pengeringan untuk hasil yang lebih renyah.",
+        "• Sudah setengah jalan! Cocok untuk pisang sale yang masih kenyal. Jemur sedikit lebih lama jika Anda ingin lebih garing.",
+        "• Tekstur saat ini ideal untuk dijadikan isian roti atau topping. Untuk daya simpan maksimal, lanjutkan pengeringan.",
       ],
       "Kering": [
-        "• Pisang sudah matang sempurna, konsumsi segera",
-        "• Cocok untuk membuat puree atau selai pisang",
-        "• Bisa diolah menjadi tepung pisang",
-        "• Ideal untuk campuran smoothie atau milkshake"
+        "• Sempurna! Tingkat kekeringan ideal telah tercapai. Segera simpan dalam wadah kedap udara untuk menjaga kerenyahannya.",
+        "• Hasil terbaik! Pisang Anda siap dinikmati atau dijual. Pastikan disimpan di tempat sejuk dan kering.",
+
       ],
       "Gambar Bukan Pisang": [
         "• Pastikan gambar yang diupload adalah pisang",
