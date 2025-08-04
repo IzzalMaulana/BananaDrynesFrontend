@@ -3,7 +3,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { FiClock, FiZap, FiRefreshCw, FiTrash2, FiX } from "react-icons/fi";
+import { FiClock, FiZap, FiRefreshCw, FiTrash2, FiX, FiLoader, FiAlertCircle } from "react-icons/fi";
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
 
@@ -171,313 +171,411 @@ export default function HistorySection({
   return (
     <>
     <section id="history" style={{ padding: "5rem 2.5rem", background: "#ffffff" }}>
-      <div style={{ maxWidth: "900px", margin: "0 auto", textAlign: "center" }}>
-          <h2 style={{ fontSize: "2.8rem", fontWeight: 800, color: "#1a202c", marginBottom: "1rem" }}>
-          Riwayat Analisis
-        </h2>
-          
-
-          
-
-          
-          {loading && (
-            <div style={{ textAlign: 'center', padding: '2rem' }}>
-              <FiRefreshCw size={32} className="spinner" style={{ margin: '0 auto 0.5rem auto' }} />
-              <p>Memuat riwayat...</p>
-                  </div>
-          )}
-
-          {error && (
-            <div style={{ marginTop: "1rem", padding: "0.75rem", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: "8px", color: "#b91c1c", fontSize: "0.9rem" }}>
-              {error}
-                  </div>
-          )}
-
-          {!loading && !error && displayedHistory.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>
-              <FiClock size={48} style={{ margin: '0 auto 1rem auto', opacity: 0.5 }} />
-              <p style={{ fontSize: '1.1rem', margin: 0 }}>Belum ada riwayat analisis</p>
-              <p style={{ fontSize: '0.9rem', margin: '0.5rem 0 0 0', opacity: 0.7 }}>Mulai dengan mengupload gambar pisang</p>
-                </div>
-          )}
-
-          {!loading && !error && displayedHistory.length > 0 && (
-            <div style={{ display: 'grid', gap: '1.5rem', marginTop: '2rem' }}>
-              {displayedHistory.map((item) => (
-                <div key={item.id} style={{ 
-                  background: '#fff', 
-                  borderRadius: '16px', 
-                  padding: '1.5rem', 
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-                  border: '1px solid #e2e8f0'
-                }}>
-                  {/* Header dengan nama file dan tombol hapus */}
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center', 
-                    marginBottom: '1rem',
-                    paddingBottom: '0.75rem',
-                    borderBottom: '1px solid #e2e8f0'
-                  }}>
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#1a202c', margin: 0 }}>
-                      📁 {item.filename}
-                    </h3>
-                    <button
-                      onClick={() => deleteHistory(item.id)}
-                      style={{
-                      background: 'transparent',
-                      border: 'none',
-                        color: '#ef4444',
-                      cursor: 'pointer',
-                      padding: '0.5rem',
-                      borderRadius: '50%',
-                        transition: 'background 0.2s'
-                    }}
-                    title="Hapus riwayat"
-                   >
-                     <FiTrash2 size={18} />
-                   </button>
-                </div>
-
-                  {/* Konten utama */}
-                  <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
-                    {/* Gambar */}
-                    <div style={{ flexShrink: 0 }}>
-                      <Image
-                        src={`${baseUrl}/uploads/${item.filename}`} 
-                        alt={item.filename}
-                        width={120}
-                        height={120}
-                        style={{ borderRadius: '12px', objectFit: 'cover' }}
-                        unoptimized
-                      />
-                    </div>
-
-                    {/* Informasi detail */}
-                    <div style={{ flex: 1, display: 'grid', gap: '0.75rem' }}>
-                      {/* Tingkat Kekeringan */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 500, minWidth: '120px' }}>
-                          �� Tingkat Kekeringan:
-                        </span>
-                        <span style={{
-                          ...getBadgeColor(item.classification), 
-                          padding: '0.25rem 0.75rem',
-                          borderRadius: '9999px',
-                          fontSize: '0.85rem', 
-                          fontWeight: 600
-                        }}>
-                          {getDrynessLevelText(item.classification)}
-                        </span>
-                      </div>
-
-                      {/* Kadar Air */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 500, minWidth: '120px' }}>
-                          💧 Kadar Air:
-                        </span>
-                        <span style={{
-                          background: '#f0f9ff',
-                          color: '#0369a1',
-                          padding: '0.25rem 0.75rem',
-                          borderRadius: '9999px',
-                          fontSize: '0.85rem',
-                          fontWeight: 600
-                        }}>
-                          {getWaterContent(item.classification)}
-                        </span>
-                      </div>
-
-                      {/* Akurasi */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 500, minWidth: '120px' }}>
-                          🎯 Akurasi:
-                        </span>
-                        <span style={{
-                          background: '#f0fdf4',
-                          color: '#15803d',
-                          padding: '0.25rem 0.75rem',
-                          borderRadius: '9999px',
-                          fontSize: '0.85rem',
-                          fontWeight: 600
-                        }}>
-                          {item.accuracy}%
-                        </span>
-                      </div>
-
-                      {/* Tanggal Upload */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 500, minWidth: '120px' }}>
-                          📅 Tanggal Upload:
-                        </span>
-                        <span style={{
-                          background: '#fef3c7',
-                          color: '#92400e',
-                          padding: '0.25rem 0.75rem',
-                          borderRadius: '9999px',
-                          fontSize: '0.85rem',
-                          fontWeight: 500
-                        }}>
-                          {item.created_at}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-              </div>
-              ))}
-            </div>
-          )}
-
-          {/* Tombol Refresh */}
-          {!loading && (
-            <button 
-              onClick={fetchHistory}
-              style={{
-                marginTop: '2rem',
-                background: '#fbbf24',
-                color: '#422006',
-                fontWeight: 600,
-                border: 'none',
-                borderRadius: '10px',
-                padding: '0.7rem 1.5rem',
-                cursor: 'pointer',
-                fontSize: '1rem',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}
-            >
-              <FiRefreshCw size={18} />
-              Refresh History
-            </button>
-          )}
-
-          {/* Tombol Lihat Semua (hanya jika bukan full page) */}
-          {!isFullPage && history.length > 3 && (
-            <button 
-              onClick={() => router.push('/history')}
-              style={{
-                marginTop: '1rem',
-                background: '#4f46e5',
-                color: 'white',
-                fontWeight: 600,
-                border: 'none',
-                borderRadius: '10px',
-                padding: '0.7rem 1.5rem',
-                cursor: 'pointer',
-                fontSize: '1rem',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}
-            >
-              <FiClock size={18} />
-              Lihat Semua Riwayat
-            </button>
-          )}
+      {/* Header Section */}
+      <div style={{ 
+        textAlign: "center", 
+        marginBottom: "4rem",
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        padding: "3rem 2rem",
+        borderRadius: "20px",
+        color: "white"
+      }}>
+        <div style={{ 
+          display: "flex", 
+          alignItems: "center", 
+          justifyContent: "center", 
+          gap: "1rem",
+          marginBottom: "1rem"
+        }}>
+          <FiClock style={{ fontSize: "2.5rem" }} />
+          <h1 style={{ 
+            fontSize: "2.5rem", 
+            fontWeight: "bold",
+            margin: 0
+          }}>
+            Riwayat Analisis
+          </h1>
         </div>
-      </section>
+        <p style={{ 
+          fontSize: "1.2rem", 
+          opacity: 0.9,
+          maxWidth: "600px",
+          margin: "0 auto"
+        }}>
+          Lihat semua hasil analisis kekeringan pisang yang telah dilakukan. 
+          Data tersimpan dengan aman dan dapat diakses kapan saja.
+        </p>
+      </div>
 
-      {/* Modal untuk tampilan penuh */}
-      {showModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000,
-          padding: '2rem'
-        }} onClick={() => setShowModal(false)}>
-          <div style={{
-            background: 'white',
-            borderRadius: '20px',
-            padding: '2rem',
-            maxWidth: '800px',
-            width: '100%',
-            maxHeight: '80vh',
-            overflow: 'auto'
-          }} onClick={(e) => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>Semua Riwayat</h3>
-              <button
-                onClick={() => setShowModal(false)}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '0.5rem',
-                  borderRadius: '50%'
-                }}
-              >
-                <FiX size={24} />
-              </button>
-            </div>
-            
-            <div style={{ display: 'grid', gap: '1rem' }}>
-              {history.map((item) => (
-                <div key={item.id} style={{ 
-                  background: '#f8fafc', 
-                  borderRadius: '12px', 
-                  padding: '1rem', 
-                  border: '1px solid #e2e8f0'
+      {/* Content */}
+      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "3rem" }}>
+            <FiLoader className="spinner" style={{ fontSize: "3rem", color: "#3b82f6" }} />
+            <p style={{ marginTop: "1rem", color: "#6b7280" }}>Memuat riwayat...</p>
+          </div>
+        ) : error ? (
+          <div style={{ 
+            textAlign: "center", 
+            padding: "3rem",
+            background: "#fef2f2",
+            borderRadius: "15px",
+            color: "#dc2626"
+          }}>
+            <FiAlertCircle style={{ fontSize: "3rem", marginBottom: "1rem" }} />
+            <p>{error}</p>
+          </div>
+        ) : displayedHistory.length === 0 ? (
+          <div style={{ 
+            textAlign: "center", 
+            padding: "3rem",
+            background: "#f9fafb",
+            borderRadius: "15px",
+            color: "#6b7280"
+          }}>
+            <FiClock style={{ fontSize: "3rem", marginBottom: "1rem" }} />
+            <p>Belum ada riwayat analisis</p>
+            <button
+              onClick={() => router.push('/')}
+              style={{
+                marginTop: "1rem",
+                padding: "0.75rem 1.5rem",
+                background: "#3b82f6",
+                color: "white",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontSize: "1rem"
+              }}
+            >
+              Mulai Analisis
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* History Cards */}
+            <div style={{ 
+              display: "grid", 
+              gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", 
+              gap: "2rem",
+              marginBottom: "2rem"
+            }}>
+              {displayedHistory.map((item) => (
+                <div key={item.id} style={{
+                  background: "white",
+                  borderRadius: "15px",
+                  padding: "1.5rem",
+                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                  border: "1px solid #e5e7eb",
+                  position: "relative"
                 }}>
-                  {/* Header */}
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center', 
-                    marginBottom: '0.75rem',
-                    paddingBottom: '0.5rem',
-                    borderBottom: '1px solid #e2e8f0'
-                  }}>
-                    <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>📁 {item.filename}</span>
-                    <span style={{ 
-                      ...getBadgeColor(item.classification), 
-                      padding: '0.25rem 0.5rem', 
-                      borderRadius: '9999px', 
-                      fontSize: '0.8rem' 
+                  {/* Delete Button */}
+                  <button
+                    onClick={() => deleteHistory(item.id)}
+                    style={{
+                      position: "absolute",
+                      top: "10px",
+                      right: "10px",
+                      background: "rgba(239, 68, 68, 0.1)",
+                      color: "#ef4444",
+                      border: "none",
+                      borderRadius: "50%",
+                      width: "32px",
+                      height: "32px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      transition: "all 0.2s ease"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "rgba(239, 68, 68, 0.2)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "rgba(239, 68, 68, 0.1)";
+                    }}
+                  >
+                    <FiTrash2 size={16} />
+                  </button>
+
+                  {/* Image */}
+                  <div style={{ marginBottom: "1rem", textAlign: "center" }}>
+                    <Image
+                      src={`${baseUrl}/uploads/${item.filename}`}
+                      alt={item.filename}
+                      width={300}
+                      height={200}
+                      style={{
+                        borderRadius: "10px",
+                        objectFit: "cover",
+                        width: "100%",
+                        height: "200px"
+                      }}
+                      unoptimized
+                    />
+                  </div>
+
+                  {/* File Info */}
+                  <div style={{ marginBottom: "1rem" }}>
+                    <p style={{ 
+                      fontSize: "0.9rem", 
+                      color: "#6b7280", 
+                      marginBottom: "0.5rem",
+                      wordBreak: "break-word"
+                    }}>
+                      <strong>File:</strong> {item.filename}
+                    </p>
+                  </div>
+
+                  {/* Classification Badge */}
+                  <div style={{ marginBottom: "1rem" }}>
+                    <span style={{
+                      padding: "0.5rem 1rem",
+                      borderRadius: "20px",
+                      fontSize: "0.9rem",
+                      fontWeight: "bold",
+                      ...getBadgeColor(item.classification)
                     }}>
                       {getDrynessLevelText(item.classification)}
                     </span>
                   </div>
 
-                  {/* Konten */}
-                  <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                    <Image 
-                      src={`${baseUrl}/uploads/${item.filename}`} 
-                      alt={item.filename}
-                      width={80} 
-                      height={80} 
-                      style={{ borderRadius: '8px', objectFit: 'cover' }}
-                      unoptimized
-                    />
-                    <div style={{ flex: 1, display: 'grid', gap: '0.5rem', fontSize: '0.85rem' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#64748b' }}>�� Kadar Air:</span>
-                        <span style={{ fontWeight: 600, color: '#0369a1' }}>{getWaterContent(item.classification)}</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#64748b' }}>🎯 Akurasi:</span>
-                        <span style={{ fontWeight: 600, color: '#15803d' }}>{item.accuracy}%</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#64748b' }}>📅 Upload:</span>
-                        <span style={{ fontWeight: 500, color: '#92400e', fontSize: '0.8rem' }}>{item.created_at}</span>
-                      </div>
+                  {/* Details */}
+                  <div style={{ 
+                    display: "grid", 
+                    gridTemplateColumns: "1fr 1fr", 
+                    gap: "1rem",
+                    marginBottom: "1rem"
+                  }}>
+                    <div>
+                      <p style={{ fontSize: "0.9rem", color: "#6b7280", marginBottom: "0.25rem" }}>
+                        Kadar Air
+                      </p>
+                      <p style={{ fontSize: "1rem", fontWeight: "bold", color: "#1f2937" }}>
+                        {getWaterContent(item.classification)}
+                      </p>
                     </div>
+                    <div>
+                      <p style={{ fontSize: "0.9rem", color: "#6b7280", marginBottom: "0.25rem" }}>
+                        Akurasi
+                      </p>
+                      <p style={{ fontSize: "1rem", fontWeight: "bold", color: "#1f2937" }}>
+                        {item.accuracy.toFixed(1)}%
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Date */}
+                  <div style={{ 
+                    borderTop: "1px solid #e5e7eb", 
+                    paddingTop: "1rem",
+                    textAlign: "center"
+                  }}>
+                    <p style={{ fontSize: "0.9rem", color: "#6b7280" }}>
+                      {formatTanggalIndo(item.created_at)}
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
+
+            {/* Show More Button (only if not full page) */}
+            {!isFullPage && history.length > 3 && (
+              <div style={{ textAlign: "center", marginTop: "2rem" }}>
+                <button
+                  onClick={() => setShowModal(true)}
+                  style={{
+                    padding: "1rem 2rem",
+                    background: "#3b82f6",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "10px",
+                    fontSize: "1.1rem",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    margin: "0 auto"
+                  }}
+                >
+                  <FiRefreshCw />
+                  Lihat Selengkapnya ({history.length} total)
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </section>
+
+    {/* Modal for Full History */}
+    {showModal && (
+      <div style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: "rgba(0, 0, 0, 0.5)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1000,
+        padding: "2rem"
+      }}
+      onClick={() => setShowModal(false)}
+      >
+        <div style={{
+          background: "white",
+          borderRadius: "20px",
+          padding: "2rem",
+          maxWidth: "90vw",
+          maxHeight: "90vh",
+          overflow: "auto",
+          position: "relative"
+        }}
+        onClick={(e) => e.stopPropagation()}
+        >
+          {/* Modal Header */}
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "2rem",
+            borderBottom: "1px solid #e5e7eb",
+            paddingBottom: "1rem"
+          }}>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", margin: 0 }}>
+              Semua Riwayat Analisis
+            </h2>
+            <button
+              onClick={() => setShowModal(false)}
+              style={{
+                background: "none",
+                border: "none",
+                fontSize: "1.5rem",
+                cursor: "pointer",
+                color: "#6b7280"
+              }}
+            >
+              <FiX />
+            </button>
+          </div>
+
+          {/* Modal Content */}
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", 
+            gap: "1.5rem"
+          }}>
+            {history.map((item) => (
+              <div key={item.id} style={{
+                background: "#f9fafb",
+                borderRadius: "12px",
+                padding: "1rem",
+                border: "1px solid #e5e7eb",
+                position: "relative"
+              }}>
+                {/* Delete Button */}
+                <button
+                  onClick={() => deleteHistory(item.id)}
+                  style={{
+                    position: "absolute",
+                    top: "8px",
+                    right: "8px",
+                    background: "rgba(239, 68, 68, 0.1)",
+                    color: "#ef4444",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: "28px",
+                    height: "28px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "0.8rem"
+                  }}
+                >
+                  <FiTrash2 size={14} />
+                </button>
+
+                {/* Image */}
+                <div style={{ marginBottom: "0.75rem", textAlign: "center" }}>
+                  <Image
+                    src={`${baseUrl}/uploads/${item.filename}`}
+                    alt={item.filename}
+                    width={250}
+                    height={150}
+                    style={{
+                      borderRadius: "8px",
+                      objectFit: "cover",
+                      width: "100%",
+                      height: "150px"
+                    }}
+                    unoptimized
+                  />
+                </div>
+
+                {/* File Info */}
+                <p style={{ 
+                  fontSize: "0.8rem", 
+                  color: "#6b7280", 
+                  marginBottom: "0.5rem",
+                  wordBreak: "break-word"
+                }}>
+                  {item.filename}
+                </p>
+
+                {/* Classification */}
+                <div style={{ marginBottom: "0.5rem" }}>
+                  <span style={{
+                    padding: "0.25rem 0.75rem",
+                    borderRadius: "12px",
+                    fontSize: "0.8rem",
+                    fontWeight: "bold",
+                    ...getBadgeColor(item.classification)
+                  }}>
+                    {getDrynessLevelText(item.classification)}
+                  </span>
+                </div>
+
+                {/* Details */}
+                <div style={{ 
+                  display: "grid", 
+                  gridTemplateColumns: "1fr 1fr", 
+                  gap: "0.5rem",
+                  fontSize: "0.8rem"
+                }}>
+                  <div>
+                    <span style={{ color: "#6b7280" }}>Air: </span>
+                    <span style={{ fontWeight: "bold" }}>
+                      {getWaterContent(item.classification)}
+                    </span>
+                  </div>
+                  <div>
+                    <span style={{ color: "#6b7280" }}>Akurasi: </span>
+                    <span style={{ fontWeight: "bold" }}>
+                      {item.accuracy.toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+
+                {/* Date */}
+                <p style={{ 
+                  fontSize: "0.75rem", 
+                  color: "#6b7280",
+                  marginTop: "0.5rem",
+                  textAlign: "center"
+                }}>
+                  {formatTanggalIndo(item.created_at)}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-      )}
+    )}
     </>
   );
 }

@@ -49,10 +49,10 @@ export default function Home() {
   return (
     <main>
       <Navbar />
-      {/* Kirim fungsi fetchHistory sebagai properti onUploadSuccess */}
+      {/* Memanggil HomeSection dan memberinya fungsi refresh */}
       <HomeSection onUploadSuccess={fetchHistory} />
       
-      {/* Kirim data history dan fungsi lainnya sebagai props */}
+      {/* Memanggil HistorySection dan memberinya data */}
       <HistorySection 
         history={history} 
         loading={historyLoading} 
@@ -61,6 +61,7 @@ export default function Home() {
         setHistory={setHistory}
       />
       
+      {/* Memanggil section lainnya */}
       <AboutSection />
       <BananaFactsSection />
       <Footer />
