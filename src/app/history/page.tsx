@@ -26,7 +26,7 @@ export default function HistoryPage() {
     setHistoryLoading(true);
     setHistoryError(null);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const apiUrl = 'http://bananadrynes.my.id';
       const res = await fetch(`${apiUrl}/history`);
       if (!res.ok) throw new Error('Gagal mengambil data history');
       const data = await res.json();

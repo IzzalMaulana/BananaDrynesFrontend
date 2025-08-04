@@ -72,7 +72,7 @@ export default function HistorySection({
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+  const apiUrl = 'http://bananadrynes.my.id';
   const baseUrl = apiUrl;
   
   // Tampilkan semua jika di halaman history, atau 3 jika di halaman utama
