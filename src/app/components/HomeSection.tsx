@@ -196,32 +196,39 @@ export default function HomeSection() {
   const getRecommendations = (classification: string): string[] => {
     const recommendations: Record<string, string[]> = {
       "Basah": [
-        "• Pisang masih segar dan cocok untuk konsumsi langsung",
-        "• Ideal untuk membuat smoothie atau jus pisang",
-        "• Simpan di tempat kering untuk mencegah pembusukan",
-        "• Kadar air masih tinggi. Lanjutkan proses pengeringan.k"
+        "Adonan Kue & Roti: Sempurna untuk bahan utama membuat Banana Bread, Muffin Pisang, atau Pancake Pisang karena kelembutannya akan menyatu dengan adonan.",
+        "Minuman Segar: Pilihan ideal untuk dibuat Smoothies atau Jus Pisang karena mudah hancur dan memberikan tekstur kental alami.",
+        "Gorengan Klasik: Bahan terbaik untuk membuat Pisang Goreng, Pisang Nugget, atau Pisang Molen yang lumer di dalam.",
+        "Hidangan Penutup Tradisional: Sangat cocok untuk dimasak menjadi Kolak Pisang atau Pisang Ijo, di mana pisang direbus dan tekstur lembutnya sangat disukai.",
+        "Makanan Bayi: Mudah dilumatkan menjadi bubur sebagai MPASI (Makanan Pendamping ASI) yang alami dan bergizi."
       ],
       "Sedang": [
-        "• Hampir kering. Lanjutkan pengeringan untuk hasil yang lebih renyah.",
-        "• Sudah setengah jalan! Cocok untuk pisang sale yang masih kenyal. Jemur sedikit lebih lama jika Anda ingin lebih garing.",
-        "• Tekstur saat ini ideal untuk dijadikan isian roti atau topping. Untuk daya simpan maksimal, lanjutkan pengeringan.",
+        "Sale Pisang Kenyal: Ini adalah bentuk paling ideal untuk produk Sale Pisang yang tidak renyah, melainkan kenyal dan legit saat digigit.",
+        "Isian Roti & Kue: Sangat baik untuk dijadikan isian roti pisang, bolen, atau kue Nagasari. Pisang tidak akan terlalu benyek dan tetap memberikan potongan yang terasa.",
+        "Campuran Granola & Sereal: Potong kecil-kecil dan campurkan ke dalam granola, muesli, atau sereal sarapan untuk memberikan rasa manis dan tekstur kenyal.",
+        "Energy Bar Buatan Sendiri: Teksturnya yang padat dan kenyal menjadikannya bahan pengikat yang sempurna untuk membuat energy bar sehat bersama oat dan kacang-kacangan.",
+        "Topping Oatmeal & Yogurt: Menjadi topping yang lezat dan bergizi untuk semangkuk oatmeal hangat atau yogurt."
       ],
       "Kering": [
-        "• Sempurna! Tingkat kekeringan ideal telah tercapai. Segera simpan dalam wadah kedap udara untuk menjaga kerenyahannya.",
-        "• Hasil terbaik! Pisang Anda siap dinikmati atau dijual. Pastikan disimpan di tempat sejuk dan kering.",
-
+        "Keripik Pisang Renyah: Bentuk olahan paling populer. Pisang yang sudah kering akan menghasilkan keripik pisang yang garing dan tidak mudah melempem.",
+        "Tepung Pisang (Banana Flour): Giling pisang yang sudah sangat kering hingga menjadi bubuk halus. Tepung Pisang ini adalah alternatif tepung bebas gluten (gluten-free) yang sehat untuk membuat kue, biskuit, atau pancake.",
+        "Taburan (Garnish) & Dekorasi Kue: Hancurkan pisang kering menjadi remah-remah untuk taburan di atas es krim, kue tart, atau donat untuk memberikan rasa manis dan tekstur renyah.",
+        "Bahan Baku Cokelat & Permen: Potongan kecil pisang kering bisa dicampurkan ke dalam adonan cokelat batangan atau permen untuk menambah variasi rasa dan tekstur.",
+        "Infused Tea: Potongan kecil pisang kering dapat digunakan untuk memberikan aroma dan rasa manis alami pada seduhan teh."
       ],
       "Gambar Bukan Pisang": [
-        "• Pastikan gambar yang diupload adalah pisang",
-        "• Gunakan pencahayaan yang baik saat foto",
-        "• Hindari gambar yang blur atau tidak jelas",
-        "• Pastikan pisang terlihat jelas dalam frame"
+        "Pastikan gambar yang diupload adalah pisang",
+        "Gunakan pencahayaan yang baik saat foto",
+        "Hindari gambar yang blur atau tidak jelas",
+        "Pastikan pisang terlihat jelas dalam frame"
       ]
     };
     
     const normalizedClassification = classification;
     return recommendations[normalizedClassification] || recommendations["Sedang"];
   };
+
+  const [showRecommendationModal, setShowRecommendationModal] = useState<boolean>(false);
 
   return (
     <>
@@ -407,7 +414,38 @@ export default function HomeSection() {
                       )}
                      
                       {/* Tombol Lihat History */}
-                      <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center' }}>
+                      <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+                        <button
+                          onClick={() => setShowRecommendationModal(true)}
+                          style={{
+                            background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+                            color: '#422006',
+                            border: 'none',
+                            borderRadius: '12px',
+                            padding: '0.75rem 1.5rem',
+                            fontSize: '1rem',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            boxShadow: '0 4px 12px rgba(251, 191, 36, 0.3)',
+                            transition: 'all 0.2s ease',
+                            minWidth: '160px',
+                            justifyContent: 'center'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                            e.currentTarget.style.boxShadow = '0 6px 16px rgba(251, 191, 36, 0.4)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(251, 191, 36, 0.3)';
+                          }}
+                        >
+                          <FiInfo size={18} />
+                          Lihat Rekomendasi
+                        </button>
                         <button
                           onClick={() => router.push('/history')}
                           style={{
@@ -451,42 +489,174 @@ export default function HomeSection() {
             </div>
           </div>
 
-          {/* Card Rekomendasi */}
-          {result && (
-            <div className="fade-in-up" style={{ opacity: 0, animationDelay: "0.8s", width: "100%", marginTop: "1rem" }}>
-              <div className="home-card" style={{ 
-                background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)", 
-                borderRadius: "20px", 
-                boxShadow: "0 8px 32px 0 rgba(0,0,0,0.08)", 
-                padding: "2.5rem", 
-                width: "100%",
-                border: "1px solid #fbbf24"
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', justifyContent: 'center' }}>
-                  <FiInfo size={28} color="#d97706" />
-                  <h3 style={{ fontSize: "1.75rem", fontWeight: 700, color: "#92400e", margin: 0 }}>
-                    Rekomendasi
-                  </h3>
-                </div>
-                <div style={{ textAlign: 'left', maxWidth: '800px', margin: '0 auto' }}>
-                  {getRecommendations(result.classification).map((recommendation, index) => (
-                    <p key={index} style={{ 
-                      fontSize: '1.1rem', 
-                      color: '#78350f', 
-                      marginBottom: '0.8rem',
-                      lineHeight: '1.6',
-                      padding: '0.5rem 0',
-                      borderBottom: index < getRecommendations(result.classification).length - 1 ? '1px solid rgba(251, 191, 36, 0.3)' : 'none'
-                    }}>
-                      {recommendation}
-                    </p>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Card Rekomendasi - REMOVED */}
         </div>
       </section>
+
+      {/* Modal Rekomendasi */}
+      {showRecommendationModal && result && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '2rem'
+        }}
+        onClick={() => setShowRecommendationModal(false)}
+        >
+          <div style={{
+            background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+            borderRadius: '20px',
+            padding: '2.5rem',
+            maxWidth: '90vw',
+            maxHeight: '90vh',
+            overflow: 'auto',
+            position: 'relative',
+            border: '2px solid #fbbf24',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
+          }}
+          onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header Modal */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '2rem',
+              borderBottom: '2px solid #fbbf24',
+              paddingBottom: '1rem'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <FiInfo size={32} color="#d97706" />
+                <h2 style={{ 
+                  fontSize: '2rem', 
+                  fontWeight: 'bold', 
+                  color: '#92400e',
+                  margin: 0
+                }}>
+                  Rekomendasi Olahan
+                </h2>
+              </div>
+              <button
+                onClick={() => setShowRecommendationModal(false)}
+                style={{
+                  background: 'rgba(255,255,255,0.8)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  fontSize: '1.5rem',
+                  color: '#92400e',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.8)';
+                }}
+              >
+                <FiX size={24} />
+              </button>
+            </div>
+
+            {/* Badge Klasifikasi */}
+            <div style={{ 
+              textAlign: 'center', 
+              marginBottom: '2rem',
+              padding: '1rem',
+              background: 'rgba(255,255,255,0.6)',
+              borderRadius: '15px',
+              border: '1px solid #fbbf24'
+            }}>
+              <p style={{ fontSize: '1.1rem', color: '#78350f', marginBottom: '0.5rem' }}>
+                Klasifikasi Pisang Anda:
+              </p>
+              <span style={{
+                ...getBadgeColor(result.classification),
+                padding: '0.5rem 1.5rem',
+                borderRadius: '25px',
+                fontSize: '1.2rem',
+                fontWeight: 'bold',
+                display: 'inline-block'
+              }}>
+                {result.classification}
+              </span>
+            </div>
+
+            {/* Daftar Rekomendasi */}
+            <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+              {getRecommendations(result.classification).map((recommendation, index) => (
+                <div key={index} style={{
+                  background: 'rgba(255,255,255,0.8)',
+                  borderRadius: '15px',
+                  padding: '1.5rem',
+                  marginBottom: '1rem',
+                  border: '1px solid rgba(251, 191, 36, 0.3)',
+                  position: 'relative'
+                }}>
+                  <div style={{
+                    position: 'absolute',
+                    top: '1rem',
+                    right: '1rem',
+                    background: '#fbbf24',
+                    color: '#422006',
+                    borderRadius: '50%',
+                    width: '30px',
+                    height: '30px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.9rem',
+                    fontWeight: 'bold'
+                  }}>
+                    {index + 1}
+                  </div>
+                  <p style={{
+                    fontSize: '1.1rem',
+                    color: '#78350f',
+                    lineHeight: '1.7',
+                    margin: 0,
+                    paddingRight: '3rem'
+                  }}>
+                    {recommendation}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Footer Modal */}
+            <div style={{
+              marginTop: '2rem',
+              padding: '1rem',
+              background: 'rgba(255,255,255,0.6)',
+              borderRadius: '10px',
+              border: '1px solid #fbbf24',
+              textAlign: 'center'
+            }}>
+              <p style={{
+                fontSize: '0.9rem',
+                color: '#92400e',
+                margin: 0,
+                fontStyle: 'italic'
+              }}>
+                💡 <strong>Tips:</strong> Rekomendasi ini disesuaikan dengan tingkat kekeringan pisang Anda. 
+                Ikuti saran untuk hasil terbaik dalam pengolahan dan penyimpanan.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
