@@ -110,21 +110,69 @@ export default function HomeSection() {
   const startCamera = async () => {
     try {
       setCameraError(null);
-      const stream = await navigator.mediaDevices.getUserMedia({ 
+      
+      // Fallback untuk browser lama
+      const getUserMedia = navigator.mediaDevices?.getUserMedia || 
+                          (navigator as any).getUserMedia ||
+                          (navigator as any).webkitGetUserMedia ||
+                          (navigator as any).mozGetUserMedia ||
+                          (navigator as any).msGetUserMedia;
+      
+      if (!getUserMedia) {
+        throw new Error('Browser Anda tidak mendukung akses kamera. Gunakan browser modern seperti Chrome, Firefox, atau Safari.');
+      }
+      
+      // Cek apakah berjalan di HTTPS (diperlukan untuk akses kamera)
+      if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        throw new Error('Akses kamera memerlukan koneksi HTTPS. Silakan gunakan upload dari galeri.');
+      }
+      
+      const constraints = {
         video: { 
           facingMode: 'environment', // Gunakan kamera belakang jika tersedia
           width: { ideal: 1280 },
           height: { ideal: 720 }
         } 
-      });
+      };
+      
+      const stream = await getUserMedia.call(navigator.mediaDevices || navigator, constraints);
+      
       setCameraStream(stream);
       setShowCamera(true);
+      
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        // Tunggu video siap
+        videoRef.current.onloadedmetadata = () => {
+          if (videoRef.current) {
+            videoRef.current.play().catch(e => {
+              console.warn('Video play failed:', e);
+            });
+          }
+        };
       }
     } catch (err) {
       console.error('Error accessing camera:', err);
-      setCameraError('Tidak dapat mengakses kamera. Pastikan izin kamera diberikan.');
+      
+      let errorMessage = 'Tidak dapat mengakses kamera.';
+      
+      if (err instanceof Error) {
+        if (err.name === 'NotAllowedError') {
+          errorMessage = 'Izin kamera ditolak. Silakan izinkan akses kamera di browser Anda.';
+        } else if (err.name === 'NotFoundError') {
+          errorMessage = 'Tidak ada kamera yang ditemukan. Pastikan perangkat Anda memiliki kamera.';
+        } else if (err.name === 'NotSupportedError') {
+          errorMessage = 'Browser Anda tidak mendukung akses kamera. Gunakan browser modern.';
+        } else if (err.name === 'NotReadableError') {
+          errorMessage = 'Kamera sedang digunakan oleh aplikasi lain. Tutup aplikasi lain yang menggunakan kamera.';
+        } else if (err.name === 'OverconstrainedError') {
+          errorMessage = 'Kamera tidak mendukung resolusi yang diminta. Silakan coba lagi.';
+        } else {
+          errorMessage = err.message || 'Terjadi kesalahan saat mengakses kamera.';
+        }
+      }
+      
+      setCameraError(errorMessage);
     }
   };
 
