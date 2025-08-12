@@ -3,7 +3,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { FiUploadCloud, FiArrowRight, FiLoader, FiRefreshCw, FiAlertCircle, FiX, FiClock, FiInfo } from "react-icons/fi";
+import { FiUploadCloud, FiArrowRight, FiLoader, FiRefreshCw, FiAlertCircle, FiX, FiClock, FiInfo, FiCamera, FiImage } from "react-icons/fi";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -63,6 +63,13 @@ export default function HomeSection() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [historyLoading, setHistoryLoading] = useState<boolean>(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
+  
+  // State untuk kamera
+  const [showCamera, setShowCamera] = useState<boolean>(false);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -95,7 +102,67 @@ export default function HomeSection() {
     setResult(null);
     setError(null);
     setIsLoading(false);
+    setCameraError(null);
     if (galleryInputRef.current) galleryInputRef.current.value = "";
+  };
+
+  // Fungsi untuk mengakses kamera
+  const startCamera = async () => {
+    try {
+      setCameraError(null);
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: 'environment', // Gunakan kamera belakang jika tersedia
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        } 
+      });
+      setCameraStream(stream);
+      setShowCamera(true);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (err) {
+      console.error('Error accessing camera:', err);
+      setCameraError('Tidak dapat mengakses kamera. Pastikan izin kamera diberikan.');
+    }
+  };
+
+  // Fungsi untuk menghentikan kamera
+  const stopCamera = () => {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      setCameraStream(null);
+    }
+    setShowCamera(false);
+    setCameraError(null);
+  };
+
+  // Fungsi untuk mengambil foto dari kamera
+  const takePhoto = () => {
+    if (!videoRef.current || !canvasRef.current) return;
+    
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+    
+    if (!context) return;
+    
+    // Set canvas size sesuai dengan video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    
+    // Gambar frame video ke canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Konversi canvas ke blob
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const file = new File([blob], `camera_photo_${Date.now()}.jpg`, { type: 'image/jpeg' });
+        processImageFile(file);
+        stopCamera(); // Tutup kamera setelah mengambil foto
+      }
+    }, 'image/jpeg', 0.8);
   };
 
   const processImageFile = (file: File) => {
@@ -300,8 +367,75 @@ export default function HomeSection() {
                 Unggah Gambar
               </h3>
               <p style={{ color: "#666", marginBottom: "2rem", minHeight: "40px", fontSize: "1.1rem" }}>
-                Pilih gambar pisang dari galeri Anda (maksimal 10MB).
+                Pilih gambar pisang dari galeri atau ambil foto dengan kamera (maksimal 10MB).
               </p>
+              
+              {/* Tombol Upload Options */}
+              <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', justifyContent: 'center' }}>
+                <button
+                  onClick={triggerGalleryInput}
+                  style={{
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '0.75rem 1.5rem',
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+                    transition: 'all 0.2s ease',
+                    minWidth: '140px',
+                    justifyContent: 'center'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(102, 126, 234, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)';
+                  }}
+                >
+                  <FiImage size={18} />
+                  Galeri
+                </button>
+                <button
+                  onClick={startCamera}
+                  style={{
+                    background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+                    color: '#422006',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '0.75rem 1.5rem',
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    boxShadow: '0 4px 12px rgba(251, 191, 36, 0.3)',
+                    transition: 'all 0.2s ease',
+                    minWidth: '140px',
+                    justifyContent: 'center'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(251, 191, 36, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(251, 191, 36, 0.3)';
+                  }}
+                >
+                  <FiCamera size={18} />
+                  Kamera
+                </button>
+              </div>
+
               {/* Drag and Drop Area */}
               <div
                 onDrop={handleDrop}
@@ -652,6 +786,211 @@ export default function HomeSection() {
               }}>
                 💡 <strong>Tips:</strong> Rekomendasi ini disesuaikan dengan tingkat kekeringan pisang Anda. 
                 Ikuti saran untuk hasil terbaik dalam pengolahan dan penyimpanan.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Kamera */}
+      {showCamera && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.9)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '1rem'
+        }}>
+          <div style={{
+            background: '#1a202c',
+            borderRadius: '20px',
+            padding: '2rem',
+            maxWidth: '90vw',
+            maxHeight: '90vh',
+            position: 'relative',
+            border: '2px solid #fbbf24',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
+          }}>
+            {/* Header Modal */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '1.5rem',
+              borderBottom: '2px solid #fbbf24',
+              paddingBottom: '1rem'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <FiCamera size={32} color="#fbbf24" />
+                <h2 style={{ 
+                  fontSize: '1.8rem', 
+                  fontWeight: 'bold', 
+                  color: '#fbbf24',
+                  margin: 0
+                }}>
+                  Ambil Foto Pisang
+                </h2>
+              </div>
+              <button
+                onClick={stopCamera}
+                style={{
+                  background: 'rgba(255,255,255,0.1)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  fontSize: '1.5rem',
+                  color: '#fbbf24',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                }}
+              >
+                <FiX size={24} />
+              </button>
+            </div>
+
+            {/* Video Preview */}
+            <div style={{
+              position: 'relative',
+              borderRadius: '15px',
+              overflow: 'hidden',
+              marginBottom: '1.5rem',
+              background: '#000',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '400px'
+            }}>
+              {cameraError ? (
+                <div style={{
+                  textAlign: 'center',
+                  color: '#fbbf24',
+                  padding: '2rem'
+                }}>
+                  <FiAlertCircle size={48} style={{ marginBottom: '1rem' }} />
+                  <p style={{ fontSize: '1.1rem', margin: '0.5rem 0' }}>
+                    {cameraError}
+                  </p>
+                  <p style={{ fontSize: '0.9rem', color: '#a0aec0' }}>
+                    Pastikan browser Anda mendukung akses kamera dan izin sudah diberikan.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                      maxHeight: '400px',
+                      borderRadius: '15px'
+                    }}
+                  />
+                  <canvas
+                    ref={canvasRef}
+                    style={{ display: 'none' }}
+                  />
+                </>
+              )}
+            </div>
+
+            {/* Tombol Kontrol */}
+            <div style={{
+              display: 'flex',
+              gap: '1rem',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
+              <button
+                onClick={stopCamera}
+                style={{
+                  background: 'rgba(255,255,255,0.1)',
+                  color: '#fbbf24',
+                  border: '2px solid #fbbf24',
+                  borderRadius: '12px',
+                  padding: '0.75rem 1.5rem',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  minWidth: '120px'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                }}
+              >
+                Batal
+              </button>
+              
+              {!cameraError && (
+                <button
+                  onClick={takePhoto}
+                  style={{
+                    background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+                    color: '#422006',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '80px',
+                    height: '80px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 20px rgba(251, 191, 36, 0.4)',
+                    transition: 'all 0.2s ease',
+                    fontSize: '2rem'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.1)';
+                    e.currentTarget.style.boxShadow = '0 6px 25px rgba(251, 191, 36, 0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(251, 191, 36, 0.4)';
+                  }}
+                >
+                  📸
+                </button>
+              )}
+            </div>
+
+            {/* Instruksi */}
+            <div style={{
+              marginTop: '1.5rem',
+              padding: '1rem',
+              background: 'rgba(251, 191, 36, 0.1)',
+              borderRadius: '10px',
+              border: '1px solid rgba(251, 191, 36, 0.3)',
+              textAlign: 'center'
+            }}>
+              <p style={{
+                fontSize: '0.9rem',
+                color: '#fbbf24',
+                margin: 0,
+                fontStyle: 'italic'
+              }}>
+                📱 <strong>Tips:</strong> Pastikan pisang terlihat jelas dalam frame dan pencahayaan cukup baik untuk hasil analisis yang akurat.
               </p>
             </div>
           </div>
