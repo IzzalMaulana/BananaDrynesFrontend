@@ -111,19 +111,33 @@ export default function HomeSection() {
     try {
       setCameraError(null);
       
-      // Fallback untuk browser lama
-      const getUserMedia = navigator.mediaDevices?.getUserMedia || 
-                          (navigator as any).getUserMedia ||
-                          (navigator as any).webkitGetUserMedia ||
-                          (navigator as any).mozGetUserMedia ||
-                          (navigator as any).msGetUserMedia;
+      // Pastikan navigator.mediaDevices tersedia
+      if (!navigator.mediaDevices) {
+        // Fallback untuk browser lama
+        (navigator as any).mediaDevices = {};
+      }
       
-      if (!getUserMedia) {
-        throw new Error('Browser Anda tidak mendukung akses kamera. Gunakan browser modern seperti Chrome, Firefox, atau Safari.');
+      // Fallback untuk getUserMedia
+      if (!navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia = function(constraints) {
+          const getUserMedia = (navigator as any).webkitGetUserMedia || 
+                              (navigator as any).mozGetUserMedia ||
+                              (navigator as any).msGetUserMedia;
+          
+          if (!getUserMedia) {
+            return Promise.reject(new Error('getUserMedia tidak didukung di browser ini'));
+          }
+          
+          return new Promise((resolve, reject) => {
+            getUserMedia.call(navigator, constraints, resolve, reject);
+          });
+        };
       }
       
       // Cek apakah berjalan di HTTPS (diperlukan untuk akses kamera)
-      if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      if (window.location.protocol !== 'https:' && 
+          window.location.hostname !== 'localhost' && 
+          window.location.hostname !== '127.0.0.1') {
         throw new Error('Akses kamera memerlukan koneksi HTTPS. Silakan gunakan upload dari galeri.');
       }
       
@@ -135,7 +149,7 @@ export default function HomeSection() {
         } 
       };
       
-      const stream = await getUserMedia.call(navigator.mediaDevices || navigator, constraints);
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       
       setCameraStream(stream);
       setShowCamera(true);
@@ -931,12 +945,23 @@ export default function HomeSection() {
                   padding: '2rem'
                 }}>
                   <FiAlertCircle size={48} style={{ marginBottom: '1rem' }} />
-                  <p style={{ fontSize: '1.1rem', margin: '0.5rem 0' }}>
+                  <p style={{ fontSize: '1.1rem', margin: '0.5rem 0', fontWeight: '600' }}>
                     {cameraError}
                   </p>
-                  <p style={{ fontSize: '0.9rem', color: '#a0aec0' }}>
-                    Pastikan browser Anda mendukung akses kamera dan izin sudah diberikan.
+                  <p style={{ fontSize: '0.9rem', color: '#a0aec0', marginBottom: '1.5rem' }}>
+                    Anda masih dapat menggunakan fitur upload dari galeri untuk menganalisis gambar pisang.
                   </p>
+                  <div style={{
+                    background: 'rgba(251, 191, 36, 0.1)',
+                    borderRadius: '10px',
+                    padding: '1rem',
+                    border: '1px solid rgba(251, 191, 36, 0.3)',
+                    marginTop: '1rem'
+                  }}>
+                    <p style={{ fontSize: '0.85rem', color: '#fbbf24', margin: 0 }}>
+                      💡 <strong>Tips:</strong> Pastikan Anda menggunakan browser modern (Chrome, Firefox, Safari) dan memberikan izin kamera saat diminta.
+                    </p>
+                  </div>
                 </div>
               ) : (
                 <>
@@ -965,7 +990,8 @@ export default function HomeSection() {
               display: 'flex',
               gap: '1rem',
               justifyContent: 'center',
-              alignItems: 'center'
+              alignItems: 'center',
+              flexWrap: 'wrap'
             }}>
               <button
                 onClick={stopCamera}
@@ -990,6 +1016,43 @@ export default function HomeSection() {
               >
                 Batal
               </button>
+              
+              {cameraError && (
+                <button
+                  onClick={() => {
+                    stopCamera();
+                    triggerGalleryInput();
+                  }}
+                  style={{
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '0.75rem 1.5rem',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+                    transition: 'all 0.2s ease',
+                    minWidth: '160px',
+                    justifyContent: 'center'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(102, 126, 234, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)';
+                  }}
+                >
+                  <FiImage size={18} />
+                  Upload dari Galeri
+                </button>
+              )}
               
               {!cameraError && (
                 <button
