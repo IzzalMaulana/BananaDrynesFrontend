@@ -88,9 +88,9 @@ export default function HomeSection() {
                               (navigator as any).mozGetUserMedia ||
                               (navigator as any).msGetUserMedia;
           
-          // if (!getUserMedia) {
-          //   return Promise.reject(new Error('getUserMedia tidak didukung di browser ini'));
-          // }
+          if (!getUserMedia) {
+            return Promise.reject(new Error('getUserMedia tidak didukung di browser ini'));
+          }
           
           return new Promise((resolve, reject) => {
             getUserMedia.call(navigator, constraints, resolve, reject);
