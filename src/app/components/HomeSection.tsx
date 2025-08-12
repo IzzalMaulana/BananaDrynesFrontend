@@ -77,27 +77,25 @@ export default function HomeSection() {
     try {
       setCameraError(null);
       
-      // Cek apakah browser mendukung getUserMedia
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error('Browser Anda tidak mendukung akses kamera. Gunakan browser modern seperti Chrome, Firefox, atau Safari.');
+      // Fallback untuk browser lama
+      if (!navigator.mediaDevices) {
+        (navigator as any).mediaDevices = {};
       }
       
-      // Skip HTTPS check untuk development dan local environment
-      const isLocalhost = window.location.hostname === 'localhost' || 
-                         window.location.hostname === '127.0.0.1' ||
-                         window.location.hostname === '0.0.0.0' ||
-                         window.location.hostname.includes('localhost') ||
-                         window.location.hostname.includes('127.0.0.1') ||
-                         window.location.hostname.includes('192.168.') ||
-                         window.location.hostname.includes('10.') ||
-                         window.location.hostname.includes('172.');
-      
-      const isDevelopment = process.env.NODE_ENV === 'development';
-      const isLocalIP = /^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)/.test(window.location.hostname);
-      
-      // Hanya cek HTTPS untuk production yang bukan local
-      if (window.location.protocol !== 'https:' && !isLocalhost && !isDevelopment && !isLocalIP && window.location.hostname !== 'localhost') {
-        console.warn('HTTPS check bypassed for local development');
+      if (!navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia = function(constraints) {
+          const getUserMedia = (navigator as any).webkitGetUserMedia || 
+                              (navigator as any).mozGetUserMedia ||
+                              (navigator as any).msGetUserMedia;
+          
+          if (!getUserMedia) {
+            return Promise.reject(new Error('getUserMedia tidak didukung di browser ini'));
+          }
+          
+          return new Promise((resolve, reject) => {
+            getUserMedia.call(navigator, constraints, resolve, reject);
+          });
+        };
       }
       
       const constraints = {
