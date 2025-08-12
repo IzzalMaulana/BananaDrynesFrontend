@@ -1054,6 +1054,16 @@ export default function HomeSection() {
               }}>
                 📱 <strong>Tips:</strong> Pastikan pisang terlihat jelas dalam frame dan pencahayaan cukup baik untuk hasil analisis yang akurat.
               </p>
+              {window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && (
+                <p style={{
+                  fontSize: '0.8rem',
+                  color: '#fbbf24',
+                  margin: '0.5rem 0 0 0',
+                  fontStyle: 'italic'
+                }}>
+                  ⚠️ <strong>Note:</strong> Kamera memerlukan HTTPS di production. Gunakan "Upload dari Galeri" jika kamera tidak berfungsi.
+                </p>
+              )}
             </div>
           </div>
         </div>
