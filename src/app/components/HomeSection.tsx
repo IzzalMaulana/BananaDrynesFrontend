@@ -135,9 +135,16 @@ export default function HomeSection() {
       }
       
       // Cek apakah berjalan di HTTPS (diperlukan untuk akses kamera)
-      if (window.location.protocol !== 'https:' && 
-          window.location.hostname !== 'localhost' && 
-          window.location.hostname !== '127.0.0.1') {
+      const isLocalhost = window.location.hostname === 'localhost' || 
+                         window.location.hostname === '127.0.0.1' ||
+                         window.location.hostname === '0.0.0.0' ||
+                         window.location.hostname.includes('localhost') ||
+                         window.location.hostname.includes('127.0.0.1');
+      
+      const isDevelopment = process.env.NODE_ENV === 'development';
+      
+      // Skip HTTPS check untuk development mode
+      if (window.location.protocol !== 'https:' && !isLocalhost && !isDevelopment) {
         throw new Error('Akses kamera memerlukan koneksi HTTPS. Silakan gunakan upload dari galeri.');
       }
       
