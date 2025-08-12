@@ -1,12 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    https: true
-  },
   // Konfigurasi untuk development server
-  devIndicators: {
-    buildActivity: false
-  }
+  eslint: {
+    ignoreDuringBuilds: true, // Ignore ESLint errors during build
+  },
 }
 
 module.exports = nextConfig

@@ -3,7 +3,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { FiUploadCloud, FiArrowRight, FiLoader, FiRefreshCw, FiAlertCircle, FiX, FiClock, FiInfo, FiCamera, FiImage } from "react-icons/fi";
+import { FiArrowRight, FiLoader, FiRefreshCw, FiAlertCircle, FiX, FiClock, FiInfo, FiCamera, FiImage } from "react-icons/fi";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -20,18 +20,6 @@ const animationStyles = `
   }
   .spinner { animation: spin 1s linear infinite; }
 `;
-
-const cardStyle: React.CSSProperties = {
-  background: "rgba(255, 255, 255, 0.9)",
-  backdropFilter: "blur(10px)",
-  border: "1px solid rgba(0, 0, 0, 0.05)",
-  borderRadius: "20px",
-  padding: "2.5rem",
-  width: "100%",
-  boxShadow: "0 8px 32px 0 rgba(0,0,0,0.08)",
-  textAlign: "center",
-  flex: "1 1 350px",
-};
 
 type AnalysisResult = {
   classification: string;
@@ -53,16 +41,13 @@ type HistoryItem = {
 export default function HomeSection() {
   const router = useRouter();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null); // <-- simpan file
-  const [resultImagePreview, setResultImagePreview] = useState<string | null>(null); // <-- baru
-  const resultImagePreviewRef = useRef<string | null>(null); // <-- baru
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [resultImagePreview, setResultImagePreview] = useState<string | null>(null);
+  const resultImagePreviewRef = useRef<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
-  const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [historyLoading, setHistoryLoading] = useState<boolean>(false);
-  const [historyError, setHistoryError] = useState<string | null>(null);
   
   // State untuk kamera
   const [showCamera, setShowCamera] = useState<boolean>(false);
@@ -70,25 +55,6 @@ export default function HomeSection() {
   const [cameraError, setCameraError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const fetchHistory = async () => {
-      setHistoryLoading(true);
-      setHistoryError(null);
-      try {
-        const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/history`;
-        const res = await fetch(apiUrl);
-        if (!res.ok) throw new Error('Gagal mengambil data history');
-        const data = await res.json();
-        setHistory(data);
-      } catch (err) {
-        setHistoryError('Gagal mengambil data history');
-      } finally {
-        setHistoryLoading(false);
-      }
-    };
-    fetchHistory();
-  }, [result]); // refresh history setiap ada hasil baru
 
   const handleReset = () => {
     if (imagePreview) URL.revokeObjectURL(imagePreview);
@@ -111,27 +77,9 @@ export default function HomeSection() {
     try {
       setCameraError(null);
       
-      // Pastikan navigator.mediaDevices tersedia
-      if (!navigator.mediaDevices) {
-        // Fallback untuk browser lama
-        (navigator as any).mediaDevices = {};
-      }
-      
-      // Fallback untuk getUserMedia
-      if (!navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia = function(constraints) {
-          const getUserMedia = (navigator as any).webkitGetUserMedia || 
-                              (navigator as any).mozGetUserMedia ||
-                              (navigator as any).msGetUserMedia;
-          
-          if (!getUserMedia) {
-            return Promise.reject(new Error('getUserMedia tidak didukung di browser ini'));
-          }
-          
-          return new Promise((resolve, reject) => {
-            getUserMedia.call(navigator, constraints, resolve, reject);
-          });
-        };
+      // Cek apakah browser mendukung getUserMedia
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Browser Anda tidak mendukung akses kamera. Gunakan browser modern seperti Chrome, Firefox, atau Safari.');
       }
       
       // Cek apakah berjalan di HTTPS (diperlukan untuk akses kamera)
@@ -320,12 +268,6 @@ export default function HomeSection() {
       case "Gambar Bukan Pisang": return { background: "#f1f5f9", color: "#475569" };
       default: return { background: "#f1f5f9", color: "#475569" };
     }
-  };
-
-  const getConfidenceColor = (accuracy: number) => {
-    if (accuracy >= 80) return "#15803d"; // Green
-    if (accuracy >= 60) return "#b45309"; // Orange
-    return "#b91c1c"; // Red
   };
 
   // Fungsi untuk mendapatkan rekomendasi berdasarkan klasifikasi
@@ -528,7 +470,7 @@ export default function HomeSection() {
               >
                 {imagePreview ? (
                   <div style={{ position: 'relative', display: 'inline-block' }}>
-                    <img src={imagePreview} alt="Preview" style={{ maxWidth: 180, maxHeight: 180, borderRadius: 12, margin: '0 auto', display: 'block', width: 180, height: 'auto' }} />
+                    <Image src={imagePreview} alt="Preview" width={180} height={180} style={{ borderRadius: 12, margin: '0 auto', display: 'block', width: 180, height: 'auto' }} />
                 <button
                       onClick={e => { e.stopPropagation(); handleReset(); }}
                   style={{
