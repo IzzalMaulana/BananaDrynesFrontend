@@ -113,13 +113,26 @@ export default function HomeSection() {
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        // Tunggu video siap
+        
+        // Tunggu video siap dan mulai play
         videoRef.current.onloadedmetadata = () => {
           if (videoRef.current) {
             videoRef.current.play().catch(e => {
               console.warn('Video play failed:', e);
+              setCameraError('Tidak dapat memulai video stream. Silakan coba lagi.');
             });
           }
+        };
+        
+        // Handle video play success
+        videoRef.current.onplay = () => {
+          console.log('Video started playing');
+        };
+        
+        // Handle video errors
+        videoRef.current.onerror = (e) => {
+          console.error('Video error:', e);
+          setCameraError('Error saat memuat video stream.');
         };
       }
     } catch (err) {
@@ -159,29 +172,50 @@ export default function HomeSection() {
 
   // Fungsi untuk mengambil foto dari kamera
   const takePhoto = () => {
-    if (!videoRef.current || !canvasRef.current) return;
+    if (!videoRef.current || !canvasRef.current) {
+      console.error('Video or canvas ref not available');
+      return;
+    }
     
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
     
-    if (!context) return;
+    if (!context) {
+      console.error('Canvas context not available');
+      return;
+    }
     
-    // Set canvas size sesuai dengan video
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    // Pastikan video sudah siap
+    if (video.readyState !== video.HAVE_ENOUGH_DATA) {
+      console.error('Video not ready');
+      setCameraError('Video belum siap. Tunggu sebentar dan coba lagi.');
+      return;
+    }
     
-    // Gambar frame video ke canvas
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-    // Konversi canvas ke blob
-    canvas.toBlob((blob) => {
-      if (blob) {
-        const file = new File([blob], `camera_photo_${Date.now()}.jpg`, { type: 'image/jpeg' });
-        processImageFile(file);
-        stopCamera(); // Tutup kamera setelah mengambil foto
-      }
-    }, 'image/jpeg', 0.8);
+    try {
+      // Set canvas size sesuai dengan video
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      // Gambar frame video ke canvas
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      // Konversi canvas ke blob
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const file = new File([blob], `camera_photo_${Date.now()}.jpg`, { type: 'image/jpeg' });
+          processImageFile(file);
+          stopCamera(); // Tutup kamera setelah mengambil foto
+        } else {
+          console.error('Failed to create blob from canvas');
+          setCameraError('Gagal mengambil foto. Silakan coba lagi.');
+        }
+      }, 'image/jpeg', 0.8);
+    } catch (error) {
+      console.error('Error taking photo:', error);
+      setCameraError('Terjadi kesalahan saat mengambil foto. Silakan coba lagi.');
+    }
   };
 
   const processImageFile = (file: File) => {
@@ -921,16 +955,24 @@ export default function HomeSection() {
                     autoPlay
                     playsInline
                     muted
+                    controls={false}
                     style={{
                       width: '100%',
                       height: 'auto',
                       maxHeight: '400px',
-                      borderRadius: '15px'
+                      borderRadius: '15px',
+                      backgroundColor: '#000'
                     }}
+                    onLoadedMetadata={() => console.log('Video metadata loaded')}
+                    onCanPlay={() => console.log('Video can play')}
+                    onPlay={() => console.log('Video started playing')}
+                    onError={(e) => console.error('Video error:', e)}
                   />
                   <canvas
                     ref={canvasRef}
                     style={{ display: 'none' }}
+                    width="1280"
+                    height="720"
                   />
                 </>
               )}
