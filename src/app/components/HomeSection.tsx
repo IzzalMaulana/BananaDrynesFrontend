@@ -53,6 +53,7 @@ export default function HomeSection() {
   const [showCamera, setShowCamera] = useState<boolean>(false);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [cameraLoading, setCameraLoading] = useState<boolean>(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -76,6 +77,8 @@ export default function HomeSection() {
   const startCamera = async () => {
     try {
       setCameraError(null);
+      setCameraLoading(true);
+      console.log('Starting camera...');
       
       // Fallback untuk browser lama
       if (!navigator.mediaDevices) {
@@ -98,45 +101,68 @@ export default function HomeSection() {
         };
       }
       
+      // Coba constraints yang lebih sederhana dulu
       const constraints = {
         video: { 
-          facingMode: 'environment', // Gunakan kamera belakang jika tersedia
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
+          facingMode: 'environment',
+          width: { ideal: 640, min: 320 },
+          height: { ideal: 480, min: 240 }
         } 
       };
       
+      console.log('Requesting camera access with constraints:', constraints);
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log('Camera stream obtained:', stream);
       
       setCameraStream(stream);
       setShowCamera(true);
+      setCameraLoading(false);
       
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        
-        // Tunggu video siap dan mulai play
-        videoRef.current.onloadedmetadata = () => {
-          if (videoRef.current) {
-            videoRef.current.play().catch(e => {
-              console.warn('Video play failed:', e);
-              setCameraError('Tidak dapat memulai video stream. Silakan coba lagi.');
-            });
-          }
-        };
-        
-        // Handle video play success
-        videoRef.current.onplay = () => {
-          console.log('Video started playing');
-        };
-        
-        // Handle video errors
-        videoRef.current.onerror = (e) => {
-          console.error('Video error:', e);
-          setCameraError('Error saat memuat video stream.');
-        };
-      }
+      // Tunggu sebentar sebelum set video
+      setTimeout(() => {
+        if (videoRef.current) {
+          console.log('Setting video srcObject...');
+          videoRef.current.srcObject = stream;
+          
+          // Tunggu video siap dan mulai play
+          videoRef.current.onloadedmetadata = () => {
+            console.log('Video metadata loaded, starting play...');
+            if (videoRef.current) {
+              videoRef.current.play().then(() => {
+                console.log('Video started playing successfully');
+              }).catch(e => {
+                console.error('Video play failed:', e);
+                setCameraError('Tidak dapat memulai video stream. Silakan coba lagi.');
+              });
+            }
+          };
+          
+          // Handle video play success
+          videoRef.current.onplay = () => {
+            console.log('Video started playing');
+          };
+          
+          // Handle video errors
+          videoRef.current.onerror = (e) => {
+            console.error('Video error:', e);
+            setCameraError('Error saat memuat video stream.');
+          };
+          
+          // Handle video load start
+          videoRef.current.onloadstart = () => {
+            console.log('Video load started');
+          };
+          
+          // Handle video can play
+          videoRef.current.oncanplay = () => {
+            console.log('Video can play');
+          };
+        }
+      }, 100);
+      
     } catch (err) {
       console.error('Error accessing camera:', err);
+      setCameraLoading(false);
       
       let errorMessage = 'Tidak dapat mengakses kamera.';
       
@@ -168,6 +194,7 @@ export default function HomeSection() {
     }
     setShowCamera(false);
     setCameraError(null);
+    setCameraLoading(false);
   };
 
   // Fungsi untuk mengambil foto dari kamera
@@ -947,6 +974,20 @@ export default function HomeSection() {
                       💡 <strong>Tips:</strong> Pastikan Anda menggunakan browser modern (Chrome, Firefox, Safari) dan memberikan izin kamera saat diminta.
                     </p>
                   </div>
+                </div>
+              ) : cameraLoading ? (
+                <div style={{
+                  textAlign: 'center',
+                  color: '#fbbf24',
+                  padding: '2rem'
+                }}>
+                  <FiLoader size={48} className="spinner" style={{ marginBottom: '1rem' }} />
+                  <p style={{ fontSize: '1.1rem', margin: '0.5rem 0' }}>
+                    Memulai Kamera...
+                  </p>
+                  <p style={{ fontSize: '0.9rem', color: '#a0aec0' }}>
+                    Mohon tunggu sebentar
+                  </p>
                 </div>
               ) : (
                 <>
